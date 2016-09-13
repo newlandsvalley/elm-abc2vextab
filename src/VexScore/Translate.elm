@@ -88,7 +88,58 @@ bodyPart ctx bp =
         vexLine =
             { stave = vexStave, items = [] }
     in
-        Ok ( vexLine, ctx )
+        case bp of
+            Score line ->
+                let
+                    itemsRes =
+                        musicLine ctx line
+                in
+                    case itemsRes of
+                        Ok ( items, newCtx ) ->
+                            Ok ( { stave = vexStave, items = items }, newCtx )
+
+                        Err e ->
+                            Err e
+
+            BodyInfo header ->
+                -- not yet implemented
+                Ok ( vexLine, ctx )
+
+
+musicLine : Context -> MusicLine -> Result String ( List VexItem, Context )
+musicLine ctx ml =
+    let
+        -- append via the pair (we really need a monad here.....)
+        apnd : Result String ( VexItem, Context ) -> Result String ( List VexItem, Context ) -> Result String ( List VexItem, Context )
+        apnd rvic rvics =
+            case ( rvic, rvics ) of
+                ( Ok vic, Ok vics ) ->
+                    let
+                        newvis =
+                            fst vic :: fst vics
+                    in
+                        Ok ( newvis, snd vic )
+
+                ( _, Err acc ) ->
+                    Err acc
+
+                ( Err next, _ ) ->
+                    Err next
+
+        f mus acc =
+            apnd (music ctx mus) acc
+    in
+        List.foldl f (Ok ( [], ctx )) ml
+
+
+music : Context -> Music -> Result String ( VexItem, Context )
+music ctx m =
+    case m of
+        Barline bar ->
+            Ok ( VexBar, ctx )
+
+        _ ->
+            Ok ( VexUnimplemented, ctx )
 
 
 

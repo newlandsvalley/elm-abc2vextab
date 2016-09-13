@@ -14,8 +14,8 @@ type alias VexLine =
 
 
 type VexItem
-    = VexNote NoteProperties
-    | VexBar
+    = -- = VexNote NoteProperties
+      VexBar
     | VexUnimplemented
 
 

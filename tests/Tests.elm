@@ -61,6 +61,12 @@ all =
         , test "two lines" <|
             \() ->
                 expectParses twoLines
+        , test "sharp key" <|
+            \() ->
+                expectScoreMatches sharpKeyScore sharpKey
+        , test "minor key" <|
+            \() ->
+                expectScoreMatches minorKeyScore minorKey
         , test "modified key unsupported" <|
             \() ->
                 expectScoreMatches modifiedKeyFailure modifiedKey
@@ -69,12 +75,12 @@ all =
 
 oneLine : String
 oneLine =
-    "M: 3/4\x0D\nK: D\x0D\n| ABC |\x0D\n"
+    "M: 3/4\x0D\nK: D\x0D\n|\x0D\n"
 
 
 oneLineScore : Result String String
 oneLineScore =
-    Ok "stave notation=true clef=treble time=3/4 key=D \x0D\n"
+    Ok "stave notation=true clef=treble key=D time=3/4 \x0D\n|\x0D\n"
 
 
 modifiedKey : String
@@ -85,6 +91,26 @@ modifiedKey =
 modifiedKeyFailure : Result String String
 modifiedKeyFailure =
     Err "modified key signatures not supported"
+
+
+sharpKey : String
+sharpKey =
+    "M: 3/4\x0D\nK: F#\x0D\n|\x0D\n"
+
+
+sharpKeyScore : Result String String
+sharpKeyScore =
+    Ok "stave notation=true clef=treble key=F# time=3/4 \x0D\n|\x0D\n"
+
+
+minorKey : String
+minorKey =
+    "M: 3/4\x0D\nK: Gm\x0D\n|\x0D\n"
+
+
+minorKeyScore : Result String String
+minorKeyScore =
+    Ok "stave notation=true clef=treble key=Gm time=3/4 \x0D\n|\x0D\n"
 
 
 twoLines : String
