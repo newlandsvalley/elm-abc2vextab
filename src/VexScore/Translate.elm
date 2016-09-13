@@ -9,6 +9,7 @@ import Abc.ParseTree exposing (..)
 import Music.Notation exposing (getHeaderMap)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
+import Result exposing (Result)
 import Ratio exposing (Rational, over)
 
 
@@ -21,39 +22,61 @@ type alias Context =
 
 {-| translate an ABC tune to a VexTab Score representation
 -}
-translate : AbcTune -> Score
+translate : AbcTune -> Result String Score
 translate t =
     let
         ctx =
             initialContext t
+
+        ksmod =
+            snd ctx.modifiedKeySig
     in
-        tuneBody ctx (snd t)
-            |> fst
+        let
+            result =
+                tuneBody ctx (snd t)
+        in
+            if (List.isEmpty ksmod) then
+                case result of
+                    Ok sc ->
+                        Ok (fst sc)
+
+                    Err e ->
+                        Err e
+            else
+                Err "modified key signatures not supported"
 
 
 
 {- translate the tune body -}
 
 
-tuneBody : Context -> TuneBody -> ( Score, Context )
+tuneBody : Context -> TuneBody -> Result String ( Score, Context )
 tuneBody ctx tb =
     let
         -- append via the pair (we really need a monad here.....)
-        apnd : ( VexLine, Context ) -> ( List VexLine, Context ) -> ( List VexLine, Context )
-        apnd vlc vlcs =
-            let
-                newvls =
-                    fst vlc :: fst vlcs
-            in
-                ( newvls, snd vlc )
+        apnd : Result String ( VexLine, Context ) -> Result String ( List VexLine, Context ) -> Result String ( List VexLine, Context )
+        apnd rvlc rvlcs =
+            case ( rvlc, rvlcs ) of
+                ( Ok vlc, Ok vlcs ) ->
+                    let
+                        newvls =
+                            fst vlc :: fst vlcs
+                    in
+                        Ok ( newvls, snd vlc )
+
+                ( _, Err acc ) ->
+                    Err acc
+
+                ( Err next, _ ) ->
+                    Err next
 
         f bp acc =
             apnd (bodyPart ctx bp) acc
     in
-        List.foldl f ( [], ctx ) tb
+        List.foldl f (Ok ( [], ctx )) tb
 
 
-bodyPart : Context -> BodyPart -> ( VexLine, Context )
+bodyPart : Context -> BodyPart -> Result String ( VexLine, Context )
 bodyPart ctx bp =
     let
         mKey =
@@ -65,7 +88,7 @@ bodyPart ctx bp =
         vexLine =
             { stave = vexStave, items = [] }
     in
-        ( vexLine, ctx )
+        Ok ( vexLine, ctx )
 
 
 

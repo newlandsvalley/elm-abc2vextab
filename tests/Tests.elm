@@ -9,9 +9,10 @@ import VexScore.Canonical exposing (toScoreText)
 import Debug exposing (..)
 
 
-tuneToScoreText : AbcTune -> String
-tuneToScoreText =
-    toScoreText << translate
+tuneToScoreText : AbcTune -> Result String String
+tuneToScoreText t =
+    translate t
+        |> Result.map toScoreText
 
 
 expectParses : String -> Expectation
@@ -33,7 +34,7 @@ expectParses s =
                 Expect.fail "parse error"
 
 
-expectScoreMatches : String -> String -> Expectation
+expectScoreMatches : Result String String -> String -> Expectation
 expectScoreMatches target s =
     let
         parseResult =
@@ -42,11 +43,10 @@ expectScoreMatches target s =
         case parseResult of
             Ok res ->
                 let
-                    text =
+                    vexResult =
                         tuneToScoreText res
-                            |> log "VexTab"
                 in
-                    Expect.equal target text
+                    Expect.equal target vexResult
 
             Err errs ->
                 Expect.fail "parse error"
@@ -61,6 +61,9 @@ all =
         , test "two lines" <|
             \() ->
                 expectParses twoLines
+        , test "modified key unsupported" <|
+            \() ->
+                expectScoreMatches modifiedKeyFailure modifiedKey
         ]
 
 
@@ -69,9 +72,19 @@ oneLine =
     "M: 3/4\x0D\nK: D\x0D\n| ABC |\x0D\n"
 
 
-oneLineScore : String
+oneLineScore : Result String String
 oneLineScore =
-    "stave notation=true clef=treble time=3/4 key=D \x0D\n"
+    Ok "stave notation=true clef=treble time=3/4 key=D \x0D\n"
+
+
+modifiedKey : String
+modifiedKey =
+    "M: 3/4\x0D\nK: D Phr ^f\x0D\n| ABC |\x0D\n"
+
+
+modifiedKeyFailure : Result String String
+modifiedKeyFailure =
+    Err "modified key signatures not supported"
 
 
 twoLines : String
