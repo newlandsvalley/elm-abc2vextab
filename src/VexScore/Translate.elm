@@ -6,11 +6,12 @@ module VexScore.Translate exposing (translate)
 -}
 
 import Abc.ParseTree exposing (..)
+import Abc.Canonical as AbcText
 import Music.Notation exposing (getHeaderMap)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
 import Result exposing (Result)
-import Ratio exposing (Rational, over)
+import Ratio exposing (Rational, over, numerator, denominator)
 import Debug exposing (log)
 
 
@@ -179,7 +180,7 @@ music : Context -> Music -> Result String ( VexItem, Context )
 music ctx m =
     case m of
         Barline bar ->
-            Ok ( VexBar, ctx )
+            Ok ( VBar, ctx )
 
         Note abcNote ->
             let
@@ -193,15 +194,94 @@ music ctx m =
                     else
                         ctx
 
-                correctedOctave =
-                    abcNote.octave - 1
+                noteDurResult =
+                    noteDur ctx abcNote
 
                 -- _ = log "pc existing new" ( abcNote.pitchClass, ctx.notesContext, newCtx.notesContext )
             in
-                Ok ( VexNote { abcNote | octave = correctedOctave } newNoteGroup, newCtx )
+                case noteDurResult of
+                    Ok d ->
+                        let
+                            vexNote =
+                                { pitchClass = abcNote.pitchClass
+                                , accidental = abcNote.accidental
+                                , octave = abcNote.octave - 1
+                                , duration =
+                                    d
+                                    -- not implemented yet
+                                , tied = abcNote.tied
+                                }
+                        in
+                            Ok ( VNote vexNote newNoteGroup, newCtx )
+
+                    Err e ->
+                        Err e
 
         _ ->
-            Ok ( VexUnimplemented, ctx )
+            Ok ( VUnimplemented, ctx )
+
+
+
+{- translate a note duration, wrapping in a Result which will be
+   in error if we can't quantise the duration
+-}
+
+
+noteDur : Context -> AbcNote -> Result String VexNoteDuration
+noteDur ctx a =
+    let
+        numer =
+            numerator ctx.unitNoteLength
+                * (numerator a.duration)
+                * 64
+
+        denom =
+            denominator ctx.unitNoteLength
+                * (denominator a.duration)
+
+        -- replace this with precise arithmetic
+        durn =
+            numer // denom
+    in
+        case durn of
+            96 ->
+                Ok WholeDotted
+
+            64 ->
+                Ok Whole
+
+            48 ->
+                Ok HalfDotted
+
+            32 ->
+                Ok Half
+
+            24 ->
+                Ok QuarterDotted
+
+            16 ->
+                Ok Quarter
+
+            12 ->
+                Ok EighthDotted
+
+            8 ->
+                Ok Eighth
+
+            6 ->
+                Ok SixteenthDotted
+
+            4 ->
+                Ok Sixteenth
+
+            3 ->
+                Ok ThirtySecondDotted
+
+            2 ->
+                Ok ThirtySecond
+
+            _ ->
+                Err ("Note too long or too dotted: " ++ (AbcText.abcNote a))
 
 
 

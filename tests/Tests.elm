@@ -69,11 +69,13 @@ all =
                 expectScoreMatches minorKeyScore minorKey
         , test "modified key unsupported" <|
             \() ->
-                expectScoreMatches modifiedKeyFailure
-                    modifiedKey
+                expectScoreMatches modifiedKeyFailure modifiedKey
         , test "simple note" <|
             \() ->
                 expectScoreMatches simpleNoteScore simpleNote
+        , test "bad note length" <|
+            \() ->
+                expectScoreMatches badNoteLengthFailure badNoteLength
         ]
 
 
@@ -129,7 +131,17 @@ simpleNote =
 
 simpleNoteScore : Result String String
 simpleNoteScore =
-    Ok (defaultStave ++ "notes A/4 B/4 |\x0D\n")
+    Ok (defaultStave ++ "notes :8 A/4 :8 B/4|\x0D\n")
+
+
+badNoteLength : String
+badNoteLength =
+    "A B30 |\x0D\n"
+
+
+badNoteLengthFailure : Result String String
+badNoteLengthFailure =
+    Err "Note too long or too dotted: B30"
 
 
 defaultStave : String

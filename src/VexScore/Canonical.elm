@@ -81,25 +81,69 @@ vexItems vis =
 vexItem : VexItem -> String
 vexItem vi =
     case vi of
-        VexBar ->
+        VBar ->
             "|\x0D\n"
 
-        VexNote abcNote newNoteGroup ->
+        VNote vexNote newNoteGroup ->
             let
                 notesKeyWord =
                     if newNoteGroup then
-                        "notes "
+                        "notes"
                     else
                         ""
+
+                pitch =
+                    toString vexNote.pitchClass
+                        ++ "/"
+                        ++ toString vexNote.octave
+
+                dur =
+                    noteDur vexNote.duration
             in
-                notesKeyWord
-                    ++ toString abcNote.pitchClass
-                    ++ "/"
-                    ++ toString abcNote.octave
-                    ++ " "
+                nicelySpace [ notesKeyWord, dur, pitch ]
 
         _ ->
             ""
+
+
+noteDur : VexNoteDuration -> String
+noteDur nd =
+    case nd of
+        Whole ->
+            ":W"
+
+        Half ->
+            ":H"
+
+        Quarter ->
+            ":Q"
+
+        Eighth ->
+            ":8"
+
+        Sixteenth ->
+            ":16"
+
+        ThirtySecond ->
+            ":32"
+
+        WholeDotted ->
+            ":Wd"
+
+        HalfDotted ->
+            ":Hd"
+
+        QuarterDotted ->
+            ":Qd"
+
+        EighthDotted ->
+            ":8d"
+
+        SixteenthDotted ->
+            ":16d"
+
+        ThirtySecondDotted ->
+            ":32d"
 
 
 headerAccidental : Maybe Accidental -> String

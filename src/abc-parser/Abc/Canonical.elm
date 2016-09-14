@@ -2,6 +2,7 @@ module Abc.Canonical
     exposing
         ( fromTune
         , fromResult
+        , abcNote
         )
 
 {-| Module for converting an ABC Tune parse tree to a canonical ABC string,

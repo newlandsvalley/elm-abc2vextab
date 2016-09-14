@@ -9,15 +9,15 @@ done
 ----
 * Staves (mostly) - key signature, meter, (treble) clef
 * Basic bar lines
-* Basic notes (pitch, octave, ordering)
+* Basic notes (pitch, octave, ordering, duration)
 
 next things to do
 -----------------
 
 * Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab
-* Note durations
 * Tuples
+* Chords
 * Stave differences between line one and the rest
 * Key, TimeSig, UnitNoteLength changes for in-body headers
 * What happens if the tune has very low notes?  How to detect a bass clef

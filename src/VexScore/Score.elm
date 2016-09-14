@@ -14,10 +14,10 @@ type alias VexLine =
 
 
 type VexItem
-    = VexNote AbcNote Bool
+    = VNote VexNote Bool
       -- Bool is the NotesContext - introducing a group of notes
-    | VexBar
-    | VexUnimplemented
+    | VBar
+    | VUnimplemented
 
 
 type alias VexStave =
@@ -30,3 +30,29 @@ type alias VexStave =
 type Clef
     = Treble
     | Bass
+
+
+type VexNoteDuration
+    = Whole
+    | Half
+    | Quarter
+    | Eighth
+    | Sixteenth
+    | ThirtySecond
+    | WholeDotted
+    | HalfDotted
+    | QuarterDotted
+    | EighthDotted
+    | SixteenthDotted
+    | ThirtySecondDotted
+
+
+type alias VexNote =
+    { pitchClass : PitchClass
+    , accidental : Maybe Accidental
+    , octave : Int
+    , duration : VexNoteDuration
+    , tied :
+        Bool
+        -- to the next note
+    }
