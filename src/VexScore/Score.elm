@@ -14,8 +14,7 @@ type alias VexLine =
 
 
 type VexItem
-    = VNote VexNote Bool
-      -- Bool is the NotesContext - introducing a group of notes
+    = VNote VexNote
     | VRest VexNoteDuration
     | VBar
     | VUnimplemented

@@ -69,7 +69,7 @@ vexStave vs =
                 _ ->
                     ""
     in
-        nicelySpace [ "stave notation=true", clef, key, time, eol ]
+        nicelySpace [ "stave notation=true", clef, key, time, eol, "notes" ]
 
 
 vexItems : List VexItem -> String
@@ -82,15 +82,17 @@ vexItem : VexItem -> String
 vexItem vi =
     case vi of
         VBar ->
-            "|\x0D\n"
+            " |"
 
-        VNote vexNote newNoteGroup ->
+        VNote vexNote ->
             let
                 notesKeyWord =
-                    if newNoteGroup then
-                        "notes"
-                    else
-                        ""
+                    {-
+                       if newNoteGroup then
+                           "notes"
+                       else
+                    -}
+                    ""
 
                 pitch =
                     toString vexNote.pitchClass

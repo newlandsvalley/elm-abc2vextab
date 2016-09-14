@@ -84,12 +84,12 @@ all =
 
 oneLine : String
 oneLine =
-    "M: 3/4\x0D\nK: D\x0D\n|\x0D\n"
+    "M: 3/4\x0D\nK: D\x0D\n|A\x0D\n"
 
 
 oneLineScore : Result String String
 oneLineScore =
-    Ok "stave notation=true clef=treble key=D time=3/4 \x0D\n|\x0D\n"
+    Ok "stave notation=true clef=treble key=D time=3/4 \x0D\n notes | :8 A/4"
 
 
 modifiedKey : String
@@ -104,22 +104,22 @@ modifiedKeyFailure =
 
 sharpKey : String
 sharpKey =
-    "M: 3/4\x0D\nK: F#\x0D\n|\x0D\n"
+    "M: 3/4\x0D\nK: F#\x0D\n|A\x0D\n"
 
 
 sharpKeyScore : Result String String
 sharpKeyScore =
-    Ok "stave notation=true clef=treble key=F# time=3/4 \x0D\n|\x0D\n"
+    Ok "stave notation=true clef=treble key=F# time=3/4 \x0D\n notes | :8 A/4"
 
 
 minorKey : String
 minorKey =
-    "M: 3/4\x0D\nK: Gm\x0D\n|\x0D\n"
+    "M: 3/4\x0D\nK: Gm\x0D\n|A\x0D\n"
 
 
 minorKeyScore : Result String String
 minorKeyScore =
-    Ok "stave notation=true clef=treble key=Gm time=3/4 \x0D\n|\x0D\n"
+    Ok "stave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4"
 
 
 twoLines : String
@@ -134,7 +134,7 @@ simpleNote =
 
 simpleNoteScore : Result String String
 simpleNoteScore =
-    Ok (defaultStave ++ "notes :8 A/4 :8 B/4|\x0D\n")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |")
 
 
 simpleRest : String
@@ -144,7 +144,7 @@ simpleRest =
 
 simpleRestScore : Result String String
 simpleRestScore =
-    Ok (defaultStave ++ "notes :8 A/4 :8 ##|\x0D\n")
+    Ok (defaultStave ++ " notes :8 A/4 :8 ## |")
 
 
 badNoteLength : String

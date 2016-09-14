@@ -19,9 +19,6 @@ type alias Context =
     { modifiedKeySig : ModifiedKeySignature
     , meter : MeterSignature
     , unitNoteLength : NoteDuration
-    , notesContext :
-        Bool
-        -- are we within the context of translating note sequences
     }
 
 
@@ -100,9 +97,9 @@ bodyPart ctx bp =
         vexLine =
             { stave = vexStave, items = [] }
 
-        -- new stave so not within a notes context
+        -- not needed now I think - we are now generating a single line of notes per stave with no newline
         staveCtx =
-            setNotesContext False ctx
+            ctx
     in
         case bp of
             Score line ->
@@ -140,8 +137,7 @@ musicLine ctx ml =
                            newvis =
                                fst vic :: fst vics
 
-                           _ =
-                               log "acc ctx, new ctx" ( (snd vics).notesContext, (snd vic).notesContext )
+
                        in
                            Ok ( newvis, snd vic )
 
@@ -184,20 +180,8 @@ music ctx m =
 
         Note abcNote ->
             let
-                -- look after the generation of a 'notes' keyword for a new group
-                newNoteGroup =
-                    not (ctx.notesContext)
-
-                newCtx =
-                    if newNoteGroup then
-                        setNotesContext newNoteGroup ctx
-                    else
-                        ctx
-
                 noteDurResult =
                     noteDur ctx abcNote.duration
-
-                -- _ = log "pc existing new" ( abcNote.pitchClass, ctx.notesContext, newCtx.notesContext )
             in
                 case noteDurResult of
                     Ok d ->
@@ -212,7 +196,7 @@ music ctx m =
                                 , tied = abcNote.tied
                                 }
                         in
-                            Ok ( VNote vexNote newNoteGroup, newCtx )
+                            Ok ( VNote vexNote, ctx )
 
                     Err e ->
                         Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote))
@@ -294,17 +278,6 @@ noteDur ctx d =
 
             _ ->
                 Err "too long or too dotted"
-
-
-
-{- keep track of whether we're needing to translate notes or not within the state -
-   we need to generate the 'notes' keyword to introduce them
--}
-
-
-setNotesContext : Bool -> Context -> Context
-setNotesContext b ctx =
-    { ctx | notesContext = b }
 
 
 
@@ -394,7 +367,6 @@ initialContext t =
         { modifiedKeySig = keySig
         , meter = meter
         , unitNoteLength = unl
-        , notesContext = False
         }
 
 
@@ -419,8 +391,6 @@ foldOverResult ctx aline fmus =
                     let
                         newvis =
                             fst vic :: fst vics
-
-                        --  _ = log "acc ctx, new ctx" ( (snd vics).notesContext, (snd vic).notesContext )
                     in
                         Ok ( newvis, snd vic )
 
