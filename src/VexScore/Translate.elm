@@ -11,12 +11,16 @@ import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
 import Result exposing (Result)
 import Ratio exposing (Rational, over)
+import Debug exposing (log)
 
 
 type alias Context =
     { modifiedKeySig : ModifiedKeySignature
     , meter : MeterSignature
     , unitNoteLength : NoteDuration
+    , notesContext :
+        Bool
+        -- are we within the context of translating note sequences
     }
 
 
@@ -52,28 +56,35 @@ translate t =
 
 tuneBody : Context -> TuneBody -> Result String ( Score, Context )
 tuneBody ctx tb =
-    let
-        -- append via the pair (we really need a monad here.....)
-        apnd : Result String ( VexLine, Context ) -> Result String ( List VexLine, Context ) -> Result String ( List VexLine, Context )
-        apnd rvlc rvlcs =
-            case ( rvlc, rvlcs ) of
-                ( Ok vlc, Ok vlcs ) ->
-                    let
-                        newvls =
-                            fst vlc :: fst vlcs
-                    in
-                        Ok ( newvls, snd vlc )
+    foldOverResult ctx tb bodyPart
 
-                ( _, Err acc ) ->
-                    Err acc
 
-                ( Err next, _ ) ->
-                    Err next
 
-        f bp acc =
-            apnd (bodyPart ctx bp) acc
-    in
-        List.foldl f (Ok ( [], ctx )) tb
+{-
+   tuneBody ctx tb =
+       let
+           -- append via the pair (we really need a monad here.....)
+           apnd : Result String ( VexLine, Context ) -> Result String ( List VexLine, Context ) -> Result String ( List VexLine, Context )
+           apnd rvlc rvlcs =
+               case ( rvlc, rvlcs ) of
+                   ( Ok vlc, Ok vlcs ) ->
+                       let
+                           newvls =
+                               fst vlc :: fst vlcs
+                       in
+                           Ok ( newvls, snd vlc )
+
+                   ( _, Err acc ) ->
+                       Err acc
+
+                   ( Err next, _ ) ->
+                       Err next
+
+           f bp acc =
+               apnd (bodyPart ctx bp) acc
+       in
+           List.foldl f (Ok ( [], ctx )) tb
+-}
 
 
 bodyPart : Context -> BodyPart -> Result String ( VexLine, Context )
@@ -87,12 +98,16 @@ bodyPart ctx bp =
 
         vexLine =
             { stave = vexStave, items = [] }
+
+        -- new stave so not within a notes context
+        staveCtx =
+            setNotesContext False ctx
     in
         case bp of
             Score line ->
                 let
                     itemsRes =
-                        musicLine ctx line
+                        musicLine staveCtx line
                 in
                     case itemsRes of
                         Ok ( items, newCtx ) ->
@@ -108,28 +123,56 @@ bodyPart ctx bp =
 
 musicLine : Context -> MusicLine -> Result String ( List VexItem, Context )
 musicLine ctx ml =
-    let
-        -- append via the pair (we really need a monad here.....)
-        apnd : Result String ( VexItem, Context ) -> Result String ( List VexItem, Context ) -> Result String ( List VexItem, Context )
-        apnd rvic rvics =
-            case ( rvic, rvics ) of
-                ( Ok vic, Ok vics ) ->
-                    let
-                        newvis =
-                            fst vic :: fst vics
-                    in
-                        Ok ( newvis, snd vic )
+    foldOverResult ctx ml music
 
-                ( _, Err acc ) ->
-                    Err acc
 
-                ( Err next, _ ) ->
-                    Err next
 
-        f mus acc =
-            apnd (music ctx mus) acc
-    in
-        List.foldl f (Ok ( [], ctx )) ml
+{-
+   musicLine ctx ml =
+       let
+           -- append via the pair (we really need a monad here.....)
+           apnd : Result String ( VexItem, Context ) -> Result String ( List VexItem, Context ) -> Result String ( List VexItem, Context )
+           apnd rvic rvics =
+               case ( rvic, rvics ) of
+                   ( Ok vic, Ok vics ) ->
+                       let
+                           newvis =
+                               fst vic :: fst vics
+
+                           _ =
+                               log "acc ctx, new ctx" ( (snd vics).notesContext, (snd vic).notesContext )
+                       in
+                           Ok ( newvis, snd vic )
+
+                   ( _, Err acc ) ->
+                       Err acc
+
+                   ( Err next, _ ) ->
+                       Err next
+
+           f mus acc =
+               let
+                   applicableCtx =
+                       case acc of
+                           Ok ( _, accCtx ) ->
+                               accCtx
+
+                           _ ->
+                               ctx
+               in
+                   apnd (music applicableCtx mus) acc
+       in
+           let
+               result =
+                   List.foldl f (Ok ( [], ctx )) ml
+           in
+               case result of
+                   Ok ( vis, ctx ) ->
+                       Ok ( List.reverse vis, ctx )
+
+                   _ ->
+                       result
+-}
 
 
 music : Context -> Music -> Result String ( VexItem, Context )
@@ -138,8 +181,38 @@ music ctx m =
         Barline bar ->
             Ok ( VexBar, ctx )
 
+        Note abcNote ->
+            let
+                -- look after the generation of a 'notes' keyword for a new group
+                newNoteGroup =
+                    not (ctx.notesContext)
+
+                newCtx =
+                    if newNoteGroup then
+                        setNotesContext newNoteGroup ctx
+                    else
+                        ctx
+
+                correctedOctave =
+                    abcNote.octave - 1
+
+                -- _ = log "pc existing new" ( abcNote.pitchClass, ctx.notesContext, newCtx.notesContext )
+            in
+                Ok ( VexNote { abcNote | octave = correctedOctave } newNoteGroup, newCtx )
+
         _ ->
             Ok ( VexUnimplemented, ctx )
+
+
+
+{- keep track of whether we're needing to translate notes or not within the state -
+   we need to generate the 'notes' keyword to introduce them
+-}
+
+
+setNotesContext : Bool -> Context -> Context
+setNotesContext b ctx =
+    { ctx | notesContext = b }
 
 
 
@@ -229,4 +302,64 @@ initialContext t =
         { modifiedKeySig = keySig
         , meter = meter
         , unitNoteLength = unl
+        , notesContext = False
         }
+
+
+
+-- Helper Functions
+{- This is a generic function that operates where we start with a list in ABC and need to end up with the
+   equivalent list in VexTab Score.  It performs a left fold over the list using the next function in the tree
+   that we need to use in the fold.  It threads the context through the fold.  Because it's a left fold
+   then we need to reverse the list in the result when we finish
+
+-}
+
+
+foldOverResult : Context -> List a -> (Context -> a -> Result String ( b, Context )) -> Result String ( List b, Context )
+foldOverResult ctx aline fmus =
+    let
+        -- append via the pair through the result (we really need a monad here.....)
+        apnd : Result String ( b, Context ) -> Result String ( List b, Context ) -> Result String ( List b, Context )
+        apnd rvic rvics =
+            case ( rvic, rvics ) of
+                ( Ok vic, Ok vics ) ->
+                    let
+                        newvis =
+                            fst vic :: fst vics
+
+                        --  _ = log "acc ctx, new ctx" ( (snd vics).notesContext, (snd vic).notesContext )
+                    in
+                        Ok ( newvis, snd vic )
+
+                ( _, Err acc ) ->
+                    Err acc
+
+                ( Err next, _ ) ->
+                    Err next
+
+        -- thread the context through the fold
+        f mus acc =
+            let
+                applicableCtx =
+                    case acc of
+                        Ok ( _, accCtx ) ->
+                            accCtx
+
+                        _ ->
+                            ctx
+            in
+                -- fmus is the next function in the tree to apply in the fold
+                apnd (fmus applicableCtx mus) acc
+    in
+        let
+            result =
+                List.foldl f (Ok ( [], ctx )) aline
+        in
+            -- we have done a left fold so we need to reverse the result
+            case result of
+                Ok ( vis, ctx ) ->
+                    Ok ( List.reverse vis, ctx )
+
+                _ ->
+                    result

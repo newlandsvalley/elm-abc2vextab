@@ -69,7 +69,11 @@ all =
                 expectScoreMatches minorKeyScore minorKey
         , test "modified key unsupported" <|
             \() ->
-                expectScoreMatches modifiedKeyFailure modifiedKey
+                expectScoreMatches modifiedKeyFailure
+                    modifiedKey
+        , test "simple note" <|
+            \() ->
+                expectScoreMatches simpleNoteScore simpleNote
         ]
 
 
@@ -116,3 +120,18 @@ minorKeyScore =
 twoLines : String
 twoLines =
     "| ABC \x0D\n| def |\x0D\n"
+
+
+simpleNote : String
+simpleNote =
+    "AB |\x0D\n"
+
+
+simpleNoteScore : Result String String
+simpleNoteScore =
+    Ok (defaultStave ++ "notes A/4 B/4 |\x0D\n")
+
+
+defaultStave : String
+defaultStave =
+    "stave notation=true clef=treble key=C time=4/4 \x0D\n"

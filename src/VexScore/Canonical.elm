@@ -8,7 +8,7 @@ module VexScore.Canonical exposing (toScoreText)
 
 import VexScore.Score exposing (..)
 import String exposing (concat)
-import Abc.ParseTree exposing (Accidental(..), Mode(..))
+import Abc.ParseTree exposing (Accidental(..), Mode(..), AbcNote)
 
 
 eol : String
@@ -83,6 +83,20 @@ vexItem vi =
     case vi of
         VexBar ->
             "|\x0D\n"
+
+        VexNote abcNote newNoteGroup ->
+            let
+                notesKeyWord =
+                    if newNoteGroup then
+                        "notes "
+                    else
+                        ""
+            in
+                notesKeyWord
+                    ++ toString abcNote.pitchClass
+                    ++ "/"
+                    ++ toString abcNote.octave
+                    ++ " "
 
         _ ->
             ""

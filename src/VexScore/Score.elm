@@ -1,6 +1,6 @@
 module VexScore.Score exposing (..)
 
-import Abc.ParseTree exposing (KeySignature, MeterSignature, PitchClass, Accidental)
+import Abc.ParseTree exposing (KeySignature, MeterSignature, PitchClass, Accidental, AbcNote)
 
 
 type alias Score =
@@ -14,8 +14,9 @@ type alias VexLine =
 
 
 type VexItem
-    = -- = VexNote NoteProperties
-      VexBar
+    = VexNote AbcNote Bool
+      -- Bool is the NotesContext - introducing a group of notes
+    | VexBar
     | VexUnimplemented
 
 
@@ -23,12 +24,6 @@ type alias VexStave =
     { clef : Clef
     , mKey : Maybe KeySignature
     , mMeter : Maybe MeterSignature
-    }
-
-
-type alias NoteProperties =
-    { pitchClass : PitchClass
-    , mAccidental : Maybe Accidental
     }
 
 
