@@ -10,14 +10,17 @@ done
 * Staves (mostly) - key signature, meter, (treble) clef
 * Basic bar lines
 * Basic notes (pitch, octave, ordering, duration)
+* Basic rests
 
 next things to do
 -----------------
 
 * Normalise modal key signatures - needs a refactoring from Abc Parser
-* Inline headers - are they supported by VexTab
+* Inline headers - are they supported by VexTab?
 * Tuples
 * Chords
 * Stave differences between line one and the rest
 * Key, TimeSig, UnitNoteLength changes for in-body headers
-* What happens if the tune has very low notes?  How to detect a bass clef
+* What happens if the tune has very low notes?  How to detect a bass clef?
+* We probably need to define newline in Score rather than Canonical
+* We need to trigger the generation of the 'notes' keyword differently

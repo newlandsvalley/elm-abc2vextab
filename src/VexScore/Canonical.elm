@@ -102,6 +102,16 @@ vexItem vi =
             in
                 nicelySpace [ notesKeyWord, dur, pitch ]
 
+        VRest duration ->
+            let
+                dur =
+                    noteDur duration
+
+                rest =
+                    "##"
+            in
+                nicelySpace [ "", dur, rest ]
+
         _ ->
             ""
 

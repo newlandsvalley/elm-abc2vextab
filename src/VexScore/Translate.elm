@@ -195,7 +195,7 @@ music ctx m =
                         ctx
 
                 noteDurResult =
-                    noteDur ctx abcNote
+                    noteDur ctx abcNote.duration
 
                 -- _ = log "pc existing new" ( abcNote.pitchClass, ctx.notesContext, newCtx.notesContext )
             in
@@ -215,31 +215,43 @@ music ctx m =
                             Ok ( VNote vexNote newNoteGroup, newCtx )
 
                     Err e ->
-                        Err e
+                        Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote))
+
+        Rest duration ->
+            let
+                noteDurResult =
+                    noteDur ctx duration
+            in
+                case noteDurResult of
+                    Ok d ->
+                        Ok ( VRest d, ctx )
+
+                    Err e ->
+                        Err ("Rest " ++ e ++ ": " ++ ("rest"))
 
         _ ->
             Ok ( VUnimplemented, ctx )
 
 
 
-{- translate a note duration, wrapping in a Result which will be
+{- translate a note or rest duration, wrapping in a Result which will be
    in error if we can't quantise the duration
 -}
 
 
-noteDur : Context -> AbcNote -> Result String VexNoteDuration
-noteDur ctx a =
+noteDur : Context -> NoteDuration -> Result String VexNoteDuration
+noteDur ctx d =
     let
         numer =
             numerator ctx.unitNoteLength
-                * (numerator a.duration)
+                * (numerator d)
                 * 64
 
         denom =
             denominator ctx.unitNoteLength
-                * (denominator a.duration)
+                * (denominator d)
 
-        -- replace this with precise arithmetic
+        -- replace this with precise arithmetic?
         durn =
             numer // denom
     in
@@ -281,7 +293,7 @@ noteDur ctx a =
                 Ok ThirtySecond
 
             _ ->
-                Err ("Note too long or too dotted: " ++ (AbcText.abcNote a))
+                Err "too long or too dotted"
 
 
 

@@ -10,7 +10,7 @@ module Abc.Canonical
    # Definition
 
    # Functions
-   @docs fromTune, fromResult
+   @docs fromTune, fromResult, abcNote
 
 -}
 
@@ -253,6 +253,8 @@ pitch octave p =
         toLower (toString p)
 
 
+{-| pretty-print a note
+-}
 abcNote : AbcNote -> String
 abcNote a =
     let

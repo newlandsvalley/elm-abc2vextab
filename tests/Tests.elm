@@ -73,6 +73,9 @@ all =
         , test "simple note" <|
             \() ->
                 expectScoreMatches simpleNoteScore simpleNote
+        , test "simple rest" <|
+            \() ->
+                expectScoreMatches simpleRestScore simpleRest
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
@@ -132,6 +135,16 @@ simpleNote =
 simpleNoteScore : Result String String
 simpleNoteScore =
     Ok (defaultStave ++ "notes :8 A/4 :8 B/4|\x0D\n")
+
+
+simpleRest : String
+simpleRest =
+    "Az |\x0D\n"
+
+
+simpleRestScore : Result String String
+simpleRestScore =
+    Ok (defaultStave ++ "notes :8 A/4 :8 ##|\x0D\n")
 
 
 badNoteLength : String
