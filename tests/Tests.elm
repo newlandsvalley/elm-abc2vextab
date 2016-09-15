@@ -76,6 +76,9 @@ all =
         , test "simple rest" <|
             \() ->
                 expectScoreMatches simpleRestScore simpleRest
+        , test "triplet" <|
+            \() ->
+                expectScoreMatches tripletScore triplet
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
@@ -145,6 +148,16 @@ simpleRest =
 simpleRestScore : Result String String
 simpleRestScore =
     Ok (defaultStave ++ " notes :8 A/4 :8 ## |")
+
+
+triplet : String
+triplet =
+    "(3ABc |\x0D\n"
+
+
+tripletScore : Result String String
+tripletScore =
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3^ |")
 
 
 badNoteLength : String

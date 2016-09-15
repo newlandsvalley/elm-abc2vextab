@@ -17,6 +17,7 @@ type VexItem
     = VNote VexNote
     | VRest VexNoteDuration
     | VBar
+    | VTuplet Int (List VexNote)
     | VUnimplemented
 
 

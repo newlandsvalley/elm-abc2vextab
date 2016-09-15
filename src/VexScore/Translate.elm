@@ -179,27 +179,8 @@ music ctx m =
             Ok ( VBar, ctx )
 
         Note abcNote ->
-            let
-                noteDurResult =
-                    noteDur ctx abcNote.duration
-            in
-                case noteDurResult of
-                    Ok d ->
-                        let
-                            vexNote =
-                                { pitchClass = abcNote.pitchClass
-                                , accidental = abcNote.accidental
-                                , octave = abcNote.octave - 1
-                                , duration =
-                                    d
-                                    -- not implemented yet
-                                , tied = abcNote.tied
-                                }
-                        in
-                            Ok ( VNote vexNote, ctx )
-
-                    Err e ->
-                        Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote))
+            note ctx abcNote
+                |> Result.map (\( vn, c ) -> ( VNote vn, c ))
 
         Rest duration ->
             let
@@ -213,8 +194,49 @@ music ctx m =
                     Err e ->
                         Err ("Rest " ++ e ++ ": " ++ ("rest"))
 
+        Tuplet tupletSignature notes ->
+            let
+                ( size, _, _ ) =
+                    tupletSignature
+
+                notesResult =
+                    noteList ctx notes
+            in
+                case notesResult of
+                    Ok ( vnotes, _ ) ->
+                        Ok ( VTuplet size vnotes, ctx )
+
+                    Err e ->
+                        Err e
+
         _ ->
             Ok ( VUnimplemented, ctx )
+
+
+note : Context -> AbcNote -> Result String ( VexNote, Context )
+note ctx abcNote =
+    let
+        noteDurResult =
+            noteDur ctx abcNote.duration
+    in
+        case noteDurResult of
+            Ok d ->
+                let
+                    vexNote =
+                        { pitchClass = abcNote.pitchClass
+                        , accidental = abcNote.accidental
+                        , octave = abcNote.octave - 1
+                        , duration =
+                            d
+                            -- not implemented yet
+                        , tied = abcNote.tied
+                        }
+                in
+                    -- Ok ( VNote vexNote, ctx )
+                    Ok ( vexNote, ctx )
+
+            Err e ->
+                Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote))
 
 
 
@@ -278,6 +300,11 @@ noteDur ctx d =
 
             _ ->
                 Err "too long or too dotted"
+
+
+noteList : Context -> List AbcNote -> Result String ( List VexNote, Context )
+noteList ctx notes =
+    foldOverResult ctx notes note
 
 
 

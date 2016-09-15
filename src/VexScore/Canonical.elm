@@ -84,25 +84,8 @@ vexItem vi =
         VBar ->
             " |"
 
-        VNote vexNote ->
-            let
-                notesKeyWord =
-                    {-
-                       if newNoteGroup then
-                           "notes"
-                       else
-                    -}
-                    ""
-
-                pitch =
-                    toString vexNote.pitchClass
-                        ++ "/"
-                        ++ toString vexNote.octave
-
-                dur =
-                    noteDur vexNote.duration
-            in
-                nicelySpace [ notesKeyWord, dur, pitch ]
+        VNote vnote ->
+            vexNote vnote
 
         VRest duration ->
             let
@@ -114,8 +97,30 @@ vexItem vi =
             in
                 nicelySpace [ "", dur, rest ]
 
+        VTuplet size vnotes ->
+            (List.map vexNote vnotes
+                |> String.concat
+            )
+                ++ " ^"
+                ++ toString size
+                ++ "^"
+
         _ ->
             ""
+
+
+vexNote : VexNote -> String
+vexNote vnote =
+    let
+        pitch =
+            toString vnote.pitchClass
+                ++ "/"
+                ++ toString vnote.octave
+
+        dur =
+            noteDur vnote.duration
+    in
+        nicelySpace [ "", dur, pitch ]
 
 
 noteDur : VexNoteDuration -> String
