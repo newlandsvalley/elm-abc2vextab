@@ -79,6 +79,9 @@ all =
         , test "triplet" <|
             \() ->
                 expectScoreMatches tripletScore triplet
+        , test "unsupported tuplet" <|
+            \() ->
+                expectScoreMatches unsupportedTupletFailure unsupportedTuplet
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
@@ -158,6 +161,16 @@ triplet =
 tripletScore : Result String String
 tripletScore =
     Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3^ |")
+
+
+unsupportedTuplet : String
+unsupportedTuplet =
+    "(3:2:4 A2B2cd |\x0D\n"
+
+
+unsupportedTupletFailure : Result String String
+unsupportedTupletFailure =
+    Err "Tuplets with uneven note lengths not supported"
 
 
 badNoteLength : String

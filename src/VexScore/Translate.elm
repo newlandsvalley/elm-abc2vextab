@@ -57,34 +57,6 @@ tuneBody ctx tb =
     foldOverResult ctx tb bodyPart
 
 
-
-{-
-   tuneBody ctx tb =
-       let
-           -- append via the pair (we really need a monad here.....)
-           apnd : Result String ( VexLine, Context ) -> Result String ( List VexLine, Context ) -> Result String ( List VexLine, Context )
-           apnd rvlc rvlcs =
-               case ( rvlc, rvlcs ) of
-                   ( Ok vlc, Ok vlcs ) ->
-                       let
-                           newvls =
-                               fst vlc :: fst vlcs
-                       in
-                           Ok ( newvls, snd vlc )
-
-                   ( _, Err acc ) ->
-                       Err acc
-
-                   ( Err next, _ ) ->
-                       Err next
-
-           f bp acc =
-               apnd (bodyPart ctx bp) acc
-       in
-           List.foldl f (Ok ( [], ctx )) tb
--}
-
-
 bodyPart : Context -> BodyPart -> Result String ( VexLine, Context )
 bodyPart ctx bp =
     let
@@ -124,54 +96,6 @@ musicLine ctx ml =
     foldOverResult ctx ml music
 
 
-
-{-
-   musicLine ctx ml =
-       let
-           -- append via the pair (we really need a monad here.....)
-           apnd : Result String ( VexItem, Context ) -> Result String ( List VexItem, Context ) -> Result String ( List VexItem, Context )
-           apnd rvic rvics =
-               case ( rvic, rvics ) of
-                   ( Ok vic, Ok vics ) ->
-                       let
-                           newvis =
-                               fst vic :: fst vics
-
-
-                       in
-                           Ok ( newvis, snd vic )
-
-                   ( _, Err acc ) ->
-                       Err acc
-
-                   ( Err next, _ ) ->
-                       Err next
-
-           f mus acc =
-               let
-                   applicableCtx =
-                       case acc of
-                           Ok ( _, accCtx ) ->
-                               accCtx
-
-                           _ ->
-                               ctx
-               in
-                   apnd (music applicableCtx mus) acc
-       in
-           let
-               result =
-                   List.foldl f (Ok ( [], ctx )) ml
-           in
-               case result of
-                   Ok ( vis, ctx ) ->
-                       Ok ( List.reverse vis, ctx )
-
-                   _ ->
-                       result
--}
-
-
 music : Context -> Music -> Result String ( VexItem, Context )
 music ctx m =
     case m of
@@ -196,18 +120,21 @@ music ctx m =
 
         Tuplet tupletSignature notes ->
             let
-                ( size, _, _ ) =
+                ( size, _, noteCount ) =
                     tupletSignature
 
                 notesResult =
                     noteList ctx notes
             in
-                case notesResult of
-                    Ok ( vnotes, _ ) ->
-                        Ok ( VTuplet size vnotes, ctx )
+                if (size /= noteCount) then
+                    Err ("Tuplets with uneven note lengths not supported")
+                else
+                    case notesResult of
+                        Ok ( vnotes, _ ) ->
+                            Ok ( VTuplet size vnotes, ctx )
 
-                    Err e ->
-                        Err e
+                        Err e ->
+                            Err e
 
         _ ->
             Ok ( VUnimplemented, ctx )
