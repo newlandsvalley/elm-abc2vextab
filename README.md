@@ -7,18 +7,21 @@ This is intended to be a utility which translates an __AbcTune__ (defined in [Ab
 
 done
 ----
-* Staves (mostly) - key signature, meter, (treble) clef
+* Staves - key signature, meter, (treble) clef
 * Basic bar lines
 * Basic notes (pitch, octave, ordering, duration)
 * Basic tuplets
 * Basic rests
+* Basic chords
 
 next things to do
 -----------------
 
+* Complete stave, bar, tuplet, chord fime detail
 * Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab?
-* Chords
 * Stave differences between line one and the rest
 * Key, TimeSig, UnitNoteLength changes for in-body headers
 * What happens if the tune has very low notes?  How to detect a bass clef?
+* Annotations
+* Slurs

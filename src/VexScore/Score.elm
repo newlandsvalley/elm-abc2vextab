@@ -15,9 +15,10 @@ type alias VexLine =
 
 type VexItem
     = VNote VexNote
-    | VRest VexNoteDuration
+    | VRest VexDuration
     | VBar
     | VTuplet Int (List VexNote)
+    | VChord VexDuration (List VexNote)
     | VUnimplemented
 
 
@@ -33,26 +34,27 @@ type Clef
     | Bass
 
 
-type VexNoteDuration
+type VexDuration
     = Whole
     | Half
     | Quarter
     | Eighth
     | Sixteenth
     | ThirtySecond
-    | WholeDotted
+    | SixtyFourth
     | HalfDotted
     | QuarterDotted
     | EighthDotted
     | SixteenthDotted
     | ThirtySecondDotted
+    | SixtyFourthDotted
 
 
 type alias VexNote =
     { pitchClass : PitchClass
     , accidental : Maybe Accidental
     , octave : Int
-    , duration : VexNoteDuration
+    , duration : VexDuration
     , tied :
         Bool
         -- to the next note

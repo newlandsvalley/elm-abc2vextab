@@ -85,6 +85,9 @@ all =
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
+        , test "basic chord" <|
+            \() ->
+                expectScoreMatches basicChordScore basicChord
         ]
 
 
@@ -171,6 +174,16 @@ unsupportedTuplet =
 unsupportedTupletFailure : Result String String
 unsupportedTupletFailure =
     Err "Tuplets with uneven note lengths not supported"
+
+
+basicChord : String
+basicChord =
+    "[ABc] |\x0D\n"
+
+
+basicChordScore : Result String String
+basicChordScore =
+    Ok (defaultStave ++ " notes ( A/4.B/4.C/5 ) |")
 
 
 badNoteLength : String

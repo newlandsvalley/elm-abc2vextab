@@ -136,6 +136,19 @@ music ctx m =
                         Err e ->
                             Err e
 
+        Chord abcChord ->
+            -- not finished - we need to take account of the overall chord duration
+            let
+                notesResult =
+                    noteList ctx abcChord.notes
+            in
+                case notesResult of
+                    Ok ( vnotes, _ ) ->
+                        Ok ( VChord Whole vnotes, ctx )
+
+                    Err e ->
+                        Err e
+
         _ ->
             Ok ( VUnimplemented, ctx )
 
@@ -172,13 +185,13 @@ note ctx abcNote =
 -}
 
 
-noteDur : Context -> NoteDuration -> Result String VexNoteDuration
+noteDur : Context -> NoteDuration -> Result String VexDuration
 noteDur ctx d =
     let
         numer =
             numerator ctx.unitNoteLength
                 * (numerator d)
-                * 64
+                * 128
 
         denom =
             denominator ctx.unitNoteLength
@@ -189,41 +202,44 @@ noteDur ctx d =
             numer // denom
     in
         case durn of
-            96 ->
-                Ok WholeDotted
-
-            64 ->
+            128 ->
                 Ok Whole
 
-            48 ->
+            96 ->
                 Ok HalfDotted
 
-            32 ->
+            64 ->
                 Ok Half
 
-            24 ->
+            48 ->
                 Ok QuarterDotted
 
-            16 ->
+            32 ->
                 Ok Quarter
 
-            12 ->
+            24 ->
                 Ok EighthDotted
 
-            8 ->
+            16 ->
                 Ok Eighth
 
-            6 ->
+            12 ->
                 Ok SixteenthDotted
 
-            4 ->
+            8 ->
                 Ok Sixteenth
 
-            3 ->
+            6 ->
                 Ok ThirtySecondDotted
 
-            2 ->
+            4 ->
                 Ok ThirtySecond
+
+            3 ->
+                Ok SixtyFourthDotted
+
+            2 ->
+                Ok SixtyFourth
 
             _ ->
                 Err "too long or too dotted"

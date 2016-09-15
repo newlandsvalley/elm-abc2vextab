@@ -11,6 +11,12 @@ import String exposing (concat)
 import Abc.ParseTree exposing (Accidental(..), Mode(..), AbcNote)
 
 
+type NoteContext
+    = Staved
+    | Tupleted
+    | Chordal
+
+
 eol : String
 eol =
     "\x0D\n"
@@ -85,7 +91,7 @@ vexItem vi =
             " |"
 
         VNote vnote ->
-            vexNote vnote
+            vexNote Staved vnote
 
         VRest duration ->
             let
@@ -98,19 +104,27 @@ vexItem vi =
                 nicelySpace [ "", dur, rest ]
 
         VTuplet size vnotes ->
-            (List.map vexNote vnotes
+            (List.map (vexNote Tupleted) vnotes
                 |> String.concat
             )
                 ++ " ^"
                 ++ toString size
                 ++ "^"
 
+        VChord dur vnotes ->
+            " ( "
+                ++ (List.map (vexNote Chordal) vnotes
+                        |> List.intersperse "."
+                        |> String.concat
+                   )
+                ++ " )"
+
         _ ->
             ""
 
 
-vexNote : VexNote -> String
-vexNote vnote =
+vexNote : NoteContext -> VexNote -> String
+vexNote ctx vnote =
     let
         pitch =
             toString vnote.pitchClass
@@ -120,10 +134,15 @@ vexNote vnote =
         dur =
             noteDur vnote.duration
     in
-        nicelySpace [ "", dur, pitch ]
+        case ctx of
+            Chordal ->
+                pitch
+
+            _ ->
+                nicelySpace [ "", dur, pitch ]
 
 
-noteDur : VexNoteDuration -> String
+noteDur : VexDuration -> String
 noteDur nd =
     case nd of
         Whole ->
@@ -144,8 +163,8 @@ noteDur nd =
         ThirtySecond ->
             ":32"
 
-        WholeDotted ->
-            ":Wd"
+        SixtyFourth ->
+            ":64"
 
         HalfDotted ->
             ":Hd"
@@ -161,6 +180,9 @@ noteDur nd =
 
         ThirtySecondDotted ->
             ":32d"
+
+        SixtyFourthDotted ->
+            ":64d"
 
 
 headerAccidental : Maybe Accidental -> String
@@ -187,6 +209,9 @@ mode m =
 
         Ionian ->
             ""
+
+        Aeolian ->
+            "m"
 
         -- we need to trap this in translate - probably by converting modes to canonical forms
         _ ->
