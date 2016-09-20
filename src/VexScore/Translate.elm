@@ -11,6 +11,7 @@ import Music.Notation exposing (getHeaderMap)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
 import Result exposing (Result)
+import Maybe exposing (withDefault)
 import Ratio exposing (Rational, over, numerator, denominator)
 import Debug exposing (log)
 
@@ -141,12 +142,26 @@ music ctx m =
             let
                 notesResult =
                     noteList ctx abcChord.notes
-            in
-                case notesResult of
-                    Ok ( vnotes, _ ) ->
-                        Ok ( VChord Whole vnotes, ctx )
 
-                    Err e ->
+                nDur =
+                    firstNoteDuration abcChord.notes
+
+                overallDur =
+                    over
+                        (numerator abcChord.duration * numerator nDur)
+                        (denominator abcChord.duration * denominator nDur)
+
+                chordDurResult =
+                    noteDur ctx overallDur
+            in
+                case ( notesResult, chordDurResult ) of
+                    ( Ok ( vnotes, _ ), Ok vexd ) ->
+                        Ok ( VChord vexd vnotes, ctx )
+
+                    ( Err e, _ ) ->
+                        Err e
+
+                    ( _, Err e ) ->
                         Err e
 
         _ ->
@@ -338,6 +353,17 @@ initialContext t =
         , meter = meter
         , unitNoteLength = unl
         }
+
+
+
+{- get the duration of the first note in a sequence -}
+
+
+firstNoteDuration : List AbcNote -> NoteDuration
+firstNoteDuration ns =
+    List.map (\a -> a.duration) ns
+        |> List.head
+        |> withDefault (over 1 1)
 
 
 

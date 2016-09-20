@@ -161,9 +161,13 @@ triplet =
     "(3ABc |\x0D\n"
 
 
+
+-- note - VexTab support not complete yet for tuplets
+
+
 tripletScore : Result String String
 tripletScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3^ |")
+    Ok (defaultStave ++ " notes A/4-B/4-C/5 ^3^ |")
 
 
 unsupportedTuplet : String

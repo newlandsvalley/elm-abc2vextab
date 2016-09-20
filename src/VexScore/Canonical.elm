@@ -104,9 +104,11 @@ vexItem vi =
                 nicelySpace [ "", dur, rest ]
 
         VTuplet size vnotes ->
-            (List.map (vexNote Tupleted) vnotes
-                |> String.concat
-            )
+            " "
+                ++ (List.map (vexNote Tupleted) vnotes
+                        |> List.intersperse "-"
+                        |> String.concat
+                   )
                 ++ " ^"
                 ++ toString size
                 ++ "^"
@@ -119,6 +121,9 @@ vexItem vi =
                    )
                 ++ " )"
 
+        {- the following are not yet implemented in VexTab:
+           grace notes
+        -}
         _ ->
             ""
 
@@ -136,6 +141,10 @@ vexNote ctx vnote =
     in
         case ctx of
             Chordal ->
+                pitch
+
+            Tupleted ->
+                -- this format not supported in VexTab nicelySpace [ dur, pitch ]
                 pitch
 
             _ ->
