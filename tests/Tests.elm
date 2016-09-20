@@ -88,6 +88,9 @@ all =
         , test "basic chord" <|
             \() ->
                 expectScoreMatches basicChordScore basicChord
+        , test "bad chord length" <|
+            \() ->
+                expectScoreMatches badChordLengthFailure badChordLength
         ]
 
 
@@ -198,6 +201,16 @@ badNoteLength =
 badNoteLengthFailure : Result String String
 badNoteLengthFailure =
     Err "Note too long or too dotted: B30"
+
+
+badChordLength : String
+badChordLength =
+    "[A1/2B1/2c1/2]30 |\x0D\n"
+
+
+badChordLengthFailure : Result String String
+badChordLengthFailure =
+    Err "Chord too long or too dotted: [A/B/c/]30"
 
 
 defaultStave : String

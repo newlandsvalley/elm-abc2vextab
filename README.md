@@ -25,3 +25,8 @@ next things to do
 * What happens if the tune has very low notes?  How to detect a bass clef?
 * Annotations
 * Slurs
+
+
+features currently unsupported by VexTab
+* First and second repeats
+* Tuplets with notes of different lengths 

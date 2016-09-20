@@ -162,7 +162,7 @@ music ctx m =
                         Err e
 
                     ( _, Err e ) ->
-                        Err e
+                        Err ("Chord " ++ e ++ ": " ++ (AbcText.abcChord abcChord))
 
         _ ->
             Ok ( VUnimplemented, ctx )
@@ -195,8 +195,9 @@ note ctx abcNote =
 
 
 
-{- translate a note or rest duration, wrapping in a Result which will be
-   in error if we can't quantise the duration
+{- translate a note or rest duration, wrapping in a Result which indicates an
+   unsupported duration.  This rounds values of 'short enough' note durations
+   to the nearest supported value
 -}
 
 
