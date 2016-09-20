@@ -19,6 +19,7 @@ type VexItem
     | VBar
     | VTuplet Int (List VexNote)
     | VChord VexDuration (List VexNote)
+    | VNotePair VexNote VexNote
     | VUnimplemented
 
 

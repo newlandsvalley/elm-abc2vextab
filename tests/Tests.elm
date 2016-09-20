@@ -79,15 +79,21 @@ all =
         , test "triplet" <|
             \() ->
                 expectScoreMatches tripletScore triplet
+        , test "basic chord" <|
+            \() ->
+                expectScoreMatches basicChordScore basicChord
+        , test "basic broken right rhythm" <|
+            \() ->
+                expectScoreMatches basicBrokenRightRhythmScore basicBrokenRightRhythm
+        , test "basic broken leftt rhythm" <|
+            \() ->
+                expectScoreMatches basicBrokenLeftRhythmScore basicBrokenLeftRhythm
         , test "unsupported tuplet" <|
             \() ->
                 expectScoreMatches unsupportedTupletFailure unsupportedTuplet
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
-        , test "basic chord" <|
-            \() ->
-                expectScoreMatches basicChordScore basicChord
         , test "bad chord length" <|
             \() ->
                 expectScoreMatches badChordLengthFailure badChordLength
@@ -191,6 +197,26 @@ basicChord =
 basicChordScore : Result String String
 basicChordScore =
     Ok (defaultStave ++ " notes ( A/4.B/4.C/5 ) |")
+
+
+basicBrokenRightRhythm : String
+basicBrokenRightRhythm =
+    "A>B |\x0D\n"
+
+
+basicBrokenRightRhythmScore : Result String String
+basicBrokenRightRhythmScore =
+    Ok (defaultStave ++ " notes :8d A/4 :16 B/4 |")
+
+
+basicBrokenLeftRhythm : String
+basicBrokenLeftRhythm =
+    "A2<B2 |\x0D\n"
+
+
+basicBrokenLeftRhythmScore : Result String String
+basicBrokenLeftRhythmScore =
+    Ok (defaultStave ++ " notes :8 A/4 :Qd B/4 |")
 
 
 badNoteLength : String

@@ -121,8 +121,13 @@ vexItem vi =
                    )
                 ++ " )"
 
+        VNotePair vnote1 vnote2 ->
+            vexNote Staved vnote1
+                ++ vexNote Staved vnote2
+
         {- the following are not yet implemented in VexTab:
            grace notes
+           first and second repeats
         -}
         _ ->
             ""

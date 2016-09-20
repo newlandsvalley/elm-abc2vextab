@@ -7,12 +7,12 @@ module VexScore.Translate exposing (translate)
 
 import Abc.ParseTree exposing (..)
 import Abc.Canonical as AbcText
-import Music.Notation exposing (getHeaderMap)
+import Music.Notation exposing (getHeaderMap, dotFactor)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
 import Result exposing (Result)
 import Maybe exposing (withDefault)
-import Ratio exposing (Rational, over, numerator, denominator)
+import Ratio exposing (Rational, over, numerator, denominator, multiply)
 import Debug exposing (log)
 
 
@@ -147,9 +147,7 @@ music ctx m =
                     firstNoteDuration abcChord.notes
 
                 overallDur =
-                    over
-                        (numerator abcChord.duration * numerator nDur)
-                        (denominator abcChord.duration * denominator nDur)
+                    multiply (abcChord.duration) nDur
 
                 chordDurResult =
                     noteDur ctx overallDur
@@ -163,6 +161,27 @@ music ctx m =
 
                     ( _, Err e ) ->
                         Err ("Chord " ++ e ++ ": " ++ (AbcText.abcChord abcChord))
+
+        BrokenRhythmPair abcNote1 broken abcNote2 ->
+            let
+                ( bNote1, bNote2 ) =
+                    makeBroken broken abcNote1 abcNote2
+
+                note1Result =
+                    note ctx bNote1
+
+                note2Result =
+                    note ctx bNote2
+            in
+                case ( note1Result, note2Result ) of
+                    ( Ok ( vnote1, _ ), Ok ( vnote2, _ ) ) ->
+                        Ok ( VNotePair vnote1 vnote2, ctx )
+
+                    ( Err e, _ ) ->
+                        Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote1))
+
+                    ( _, Err e ) ->
+                        Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote2))
 
         _ ->
             Ok ( VUnimplemented, ctx )
@@ -259,6 +278,43 @@ noteDur ctx d =
 
             _ ->
                 Err "too long or too dotted"
+
+
+
+{- apply the specified broken rhythm to each note in the note pair (presented individually)
+   and return the broken note pair
+-}
+
+
+makeBroken : Broken -> AbcNote -> AbcNote -> ( AbcNote, AbcNote )
+makeBroken broken n1 n2 =
+    let
+        down i =
+            Ratio.add (1 `over` 1) (Ratio.negate (dotFactor i))
+
+        up i =
+            Ratio.add (1 `over` 1) (dotFactor i)
+    in
+        case broken of
+            LeftArrow i ->
+                let
+                    left =
+                        { n1 | duration = multiply n1.duration (down i) }
+
+                    right =
+                        { n2 | duration = multiply n2.duration (up i) }
+                in
+                    ( left, right )
+
+            RightArrow i ->
+                let
+                    left =
+                        { n1 | duration = multiply n1.duration (up i) }
+
+                    right =
+                        { n2 | duration = multiply n2.duration (down i) }
+                in
+                    ( left, right )
 
 
 noteList : Context -> List AbcNote -> Result String ( List VexNote, Context )
