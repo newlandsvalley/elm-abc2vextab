@@ -3,6 +3,8 @@ elm.js
 Main.html
 index.html
 /deprecated/
+/examples/elm-stuff/
 /distjs/*.js
+/examples/distjs/*.js
 /tests/elm-stuff/
 

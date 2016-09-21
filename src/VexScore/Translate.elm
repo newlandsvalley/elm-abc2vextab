@@ -1,12 +1,13 @@
-module VexScore.Translate exposing (translate)
+module VexScore.Translate exposing (translate, translateText)
 
 {-|
 
-@docs translate
+@docs translate, translateText
 -}
 
 import Abc.ParseTree exposing (..)
 import Abc.Canonical as AbcText
+import Abc exposing (parse, parseError)
 import Music.Notation exposing (getHeaderMap, dotFactor)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
@@ -47,6 +48,22 @@ translate t =
                         Err e
             else
                 Err "modified key signatures not supported"
+
+
+{-| translate ABC text to a VexTab Score representation
+-}
+translateText : String -> Result String Score
+translateText s =
+    let
+        parseResult =
+            parse s
+    in
+        case parseResult of
+            Ok tune ->
+                translate tune
+
+            Err e ->
+                Err ("parse error: " ++ (parseError e))
 
 
 

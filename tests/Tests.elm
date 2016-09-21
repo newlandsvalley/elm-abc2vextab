@@ -2,7 +2,7 @@ module Tests exposing (..)
 
 import Test exposing (..)
 import Expect exposing (Expectation)
-import Abc exposing (parse, parseKeySignature, parseError)
+import Abc exposing (parse, parseError)
 import Abc.ParseTree exposing (..)
 import VexScore.Translate exposing (translate)
 import VexScore.Canonical exposing (toScoreText)
