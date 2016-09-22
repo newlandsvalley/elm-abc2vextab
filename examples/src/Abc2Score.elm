@@ -6,7 +6,7 @@ import Html.Events exposing (on, onClick, onInput)
 import Html.App as Html
 import String exposing (foldr, cons)
 import Maybe.Extra exposing (isJust)
-import VexTab.Module as VexTab
+import VexTab exposing (..)
 import VexTab.Config exposing (Config)
 import VexScore.Translate exposing (translateText)
 import VexScore.Canonical exposing (toScoreText)
