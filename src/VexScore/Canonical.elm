@@ -8,6 +8,7 @@ module VexScore.Canonical exposing (toScoreText)
 
 import VexScore.Score exposing (..)
 import String exposing (concat)
+import Maybe exposing (withDefault)
 import Abc.ParseTree exposing (Accidental(..), Mode(..), AbcNote)
 
 
@@ -75,7 +76,8 @@ vexStave vs =
                 _ ->
                     ""
     in
-        nicelySpace [ "stave notation=true", clef, key, time, eol, "notes" ]
+        "\x0D\n"
+            ++ (nicelySpace [ "stave notation=true", clef, key, time, eol, "notes" ])
 
 
 vexItems : List VexItem -> String
@@ -136,8 +138,13 @@ vexItem vi =
 vexNote : NoteContext -> VexNote -> String
 vexNote ctx vnote =
     let
+        accident =
+            Maybe.map accidental vnote.accidental
+                |> withDefault ""
+
         pitch =
             toString vnote.pitchClass
+                ++ accident
                 ++ "/"
                 ++ toString vnote.octave
 
@@ -160,13 +167,13 @@ noteDur : VexDuration -> String
 noteDur nd =
     case nd of
         Whole ->
-            ":W"
+            ":w"
 
         Half ->
-            ":H"
+            ":h"
 
         Quarter ->
-            ":Q"
+            ":q"
 
         Eighth ->
             ":8"
@@ -181,10 +188,10 @@ noteDur nd =
             ":64"
 
         HalfDotted ->
-            ":Hd"
+            ":hd"
 
         QuarterDotted ->
-            ":Qd"
+            ":qd"
 
         EighthDotted ->
             ":8d"
@@ -197,6 +204,25 @@ noteDur nd =
 
         SixtyFourthDotted ->
             ":64d"
+
+
+accidental : Accidental -> String
+accidental a =
+    case a of
+        Sharp ->
+            "#"
+
+        Flat ->
+            "@"
+
+        DoubleSharp ->
+            "##"
+
+        DoubleFlat ->
+            "@@"
+
+        Natural ->
+            "n"
 
 
 headerAccidental : Maybe Accidental -> String

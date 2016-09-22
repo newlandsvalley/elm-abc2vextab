@@ -21,7 +21,7 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 
 * Staves - key signature, meter, (treble) clef
 * Basic bar lines
-* Basic notes (pitch, octave, ordering, duration)
+* notes
 * Basic tuplets
 * Basic rests
 * Basic chords
@@ -37,6 +37,3 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 * What happens if the tune has very low notes?  How to detect a bass clef?
 * Annotations
 * Slurs
-
-
-

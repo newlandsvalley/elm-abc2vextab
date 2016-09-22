@@ -73,6 +73,9 @@ all =
         , test "simple note" <|
             \() ->
                 expectScoreMatches simpleNoteScore simpleNote
+        , test "accidental note" <|
+            \() ->
+                expectScoreMatches accidentalNoteScore accidentalNote
         , test "simple rest" <|
             \() ->
                 expectScoreMatches simpleRestScore simpleRest
@@ -107,7 +110,7 @@ oneLine =
 
 oneLineScore : Result String String
 oneLineScore =
-    Ok "stave notation=true clef=treble key=D time=3/4 \x0D\n notes | :8 A/4"
+    Ok "\x0D\nstave notation=true clef=treble key=D time=3/4 \x0D\n notes | :8 A/4"
 
 
 modifiedKey : String
@@ -127,7 +130,7 @@ sharpKey =
 
 sharpKeyScore : Result String String
 sharpKeyScore =
-    Ok "stave notation=true clef=treble key=F# time=3/4 \x0D\n notes | :8 A/4"
+    Ok "\x0D\nstave notation=true clef=treble key=F# time=3/4 \x0D\n notes | :8 A/4"
 
 
 minorKey : String
@@ -137,7 +140,7 @@ minorKey =
 
 minorKeyScore : Result String String
 minorKeyScore =
-    Ok "stave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4"
+    Ok "\x0D\nstave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4"
 
 
 twoLines : String
@@ -153,6 +156,16 @@ simpleNote =
 simpleNoteScore : Result String String
 simpleNoteScore =
     Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |")
+
+
+accidentalNote : String
+accidentalNote =
+    "^A^^B _c__d =e |\x0D\n"
+
+
+accidentalNoteScore : Result String String
+accidentalNoteScore =
+    Ok (defaultStave ++ " notes :8 A#/4 :8 B##/4 :8 C@/5 :8 D@@/5 :8 En/5 |")
 
 
 simpleRest : String
@@ -216,7 +229,7 @@ basicBrokenLeftRhythm =
 
 basicBrokenLeftRhythmScore : Result String String
 basicBrokenLeftRhythmScore =
-    Ok (defaultStave ++ " notes :8 A/4 :Qd B/4 |")
+    Ok (defaultStave ++ " notes :8 A/4 :qd B/4 |")
 
 
 badNoteLength : String
@@ -241,4 +254,4 @@ badChordLengthFailure =
 
 defaultStave : String
 defaultStave =
-    "stave notation=true clef=treble key=C time=4/4 \x0D\n"
+    "\x0D\nstave notation=true clef=treble key=C time=4/4 \x0D\n"
