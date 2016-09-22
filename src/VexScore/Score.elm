@@ -1,10 +1,23 @@
 module VexScore.Score exposing (..)
 
-import Abc.ParseTree exposing (KeySignature, MeterSignature, PitchClass, Accidental, AbcNote)
+import Abc.ParseTree
+    exposing
+        ( KeySignature
+        , MeterSignature
+        , PitchClass
+        , Accidental
+        , AbcNote
+        , Bar
+        )
 
 
 type alias Score =
-    List VexLine
+    List VexBodyPart
+
+
+type VexBodyPart
+    = VLine VexLine
+    | VContextChange
 
 
 type alias VexLine =
@@ -16,7 +29,7 @@ type alias VexLine =
 type VexItem
     = VNote VexNote
     | VRest VexDuration
-    | VBar
+    | VBar Bar
     | VTuplet Int (List VexNote)
     | VChord VexDuration (List VexNote)
     | VNotePair VexNote VexNote

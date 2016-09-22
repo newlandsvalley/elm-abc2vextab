@@ -61,6 +61,9 @@ all =
         , test "two lines" <|
             \() ->
                 expectParses twoLines
+        , test "repeats" <|
+            \() ->
+                expectScoreMatches repeatsScore repeats
         , test "sharp key" <|
             \() ->
                 expectScoreMatches sharpKeyScore sharpKey
@@ -146,6 +149,16 @@ minorKeyScore =
 twoLines : String
 twoLines =
     "| ABC \x0D\n| def |\x0D\n"
+
+
+repeats : String
+repeats =
+    "|: AB :|\x0D\n"
+
+
+repeatsScore : Result String String
+repeatsScore =
+    Ok (defaultStave ++ " notes =|: :8 A/4 :8 B/4 =:|")
 
 
 simpleNote : String

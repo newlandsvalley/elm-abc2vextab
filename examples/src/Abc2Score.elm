@@ -61,7 +61,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AbcText s ->
-            ( { model | abc = s }
+            ( { model | abc = s, error = Nothing }
             , Cmd.none
             )
 

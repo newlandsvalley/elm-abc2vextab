@@ -19,7 +19,7 @@ import Debug exposing (log)
 
 type alias Context =
     { modifiedKeySig : ModifiedKeySignature
-    , meter : MeterSignature
+    , meter : Maybe MeterSignature
     , unitNoteLength : NoteDuration
     }
 
@@ -75,38 +75,41 @@ tuneBody ctx tb =
     foldOverResult ctx tb bodyPart
 
 
-bodyPart : Context -> BodyPart -> Result String ( VexLine, Context )
+bodyPart : Context -> BodyPart -> Result String ( VexBodyPart, Context )
 bodyPart ctx bp =
+    case bp of
+        Score musicline ->
+            vexLine ctx musicline
+
+        BodyInfo header ->
+            -- not yet implemented
+            Ok ( VContextChange, ctx )
+
+
+vexLine : Context -> MusicLine -> Result String ( VexBodyPart, Context )
+vexLine ctx line =
     let
         mKey =
             Just (fst ctx.modifiedKeySig)
 
         vexStave =
-            { clef = Treble, mKey = mKey, mMeter = Just ctx.meter }
+            { clef = Treble, mKey = mKey, mMeter = ctx.meter }
 
-        vexLine =
-            { stave = vexStave, items = [] }
-
-        -- not needed now I think - we are now generating a single line of notes per stave with no newline
+        {- now we've processed the stave, remove the key signature from the context#
+           which we don't need to generate any longer unless there's a key changes
+        -}
         staveCtx =
-            ctx
+            { ctx | meter = Nothing }
+
+        itemsRes =
+            musicLine staveCtx line
     in
-        case bp of
-            Score line ->
-                let
-                    itemsRes =
-                        musicLine staveCtx line
-                in
-                    case itemsRes of
-                        Ok ( items, newCtx ) ->
-                            Ok ( { stave = vexStave, items = items }, newCtx )
+        case itemsRes of
+            Ok ( items, newCtx ) ->
+                Ok ( VLine { stave = vexStave, items = items }, newCtx )
 
-                        Err e ->
-                            Err e
-
-            BodyInfo header ->
-                -- not yet implemented
-                Ok ( vexLine, ctx )
+            Err e ->
+                Err e
 
 
 musicLine : Context -> MusicLine -> Result String ( List VexItem, Context )
@@ -118,7 +121,7 @@ music : Context -> Music -> Result String ( VexItem, Context )
 music ctx m =
     case m of
         Barline bar ->
-            Ok ( VBar, ctx )
+            Ok ( VBar bar, ctx )
 
         Note abcNote ->
             note ctx abcNote
@@ -367,19 +370,19 @@ getKeySig mkh =
 {- get the meter defaulted to 4 4 -}
 
 
-getMeter : Maybe Header -> MeterSignature
+getMeter : Maybe Header -> Maybe MeterSignature
 getMeter mmh =
     case mmh of
         Just mh ->
             case mh of
                 Meter (Just ms) ->
-                    ms
+                    Just ms
 
                 _ ->
-                    ( 4, 4 )
+                    Just ( 4, 4 )
 
         _ ->
-            ( 4, 4 )
+            Just ( 4, 4 )
 
 
 

@@ -20,16 +20,16 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 ### done
 
 * Staves - key signature, meter, (treble) clef
-* Basic bar lines
+* bar lines
 * notes
 * Basic tuplets
 * Basic rests
 * Basic chords
-* Basic broken rhythm pairs
+* broken rhythm pairs
 
 ### next things to do
 
-* Complete stave, bar, tuplet, chord fime detail
+* Complete stave, tuplet, chord fime detail
 * Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab?
 * Stave differences between line one and the rest

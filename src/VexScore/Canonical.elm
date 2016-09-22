@@ -9,7 +9,15 @@ module VexScore.Canonical exposing (toScoreText)
 import VexScore.Score exposing (..)
 import String exposing (concat)
 import Maybe exposing (withDefault)
-import Abc.ParseTree exposing (Accidental(..), Mode(..), AbcNote)
+import Abc.ParseTree
+    exposing
+        ( Accidental(..)
+        , Mode(..)
+        , AbcNote
+        , Bar
+        , Thickness(..)
+        , Repeat(..)
+        )
 
 
 type NoteContext
@@ -37,9 +45,19 @@ toScoreText : Score -> String
 toScoreText score =
     let
         f vl acc =
-            acc ++ vexLine vl
+            acc ++ vexBodyPart vl
     in
         List.foldl f "" score
+
+
+vexBodyPart : VexBodyPart -> String
+vexBodyPart bp =
+    case bp of
+        VLine line ->
+            vexLine line
+
+        VContextChange ->
+            ""
 
 
 vexLine : VexLine -> String
@@ -89,8 +107,8 @@ vexItems vis =
 vexItem : VexItem -> String
 vexItem vi =
     case vi of
-        VBar ->
-            " |"
+        VBar bar ->
+            vexBar bar
 
         VNote vnote ->
             vexNote Staved vnote
@@ -223,6 +241,27 @@ accidental a =
 
         Natural ->
             "n"
+
+
+vexBar : Bar -> String
+vexBar b =
+    case b.repeat of
+        Just Begin ->
+            " =|:"
+
+        Just End ->
+            " =:|"
+
+        Just BeginAndEnd ->
+            " =::"
+
+        Nothing ->
+            case b.thickness of
+                Thin ->
+                    " |"
+
+                _ ->
+                    " =||"
 
 
 headerAccidental : Maybe Accidental -> String
