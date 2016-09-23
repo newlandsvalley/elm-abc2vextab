@@ -81,9 +81,12 @@ bodyPart ctx bp =
         Score musicline ->
             vexLine ctx musicline
 
-        BodyInfo header ->
-            -- not yet implemented
-            Ok ( VContextChange, ctx )
+        BodyInfo h ->
+            let
+                newCtx =
+                    header ctx h
+            in
+                Ok ( VContextChange, newCtx )
 
 
 vexLine : Context -> MusicLine -> Result String ( VexBodyPart, Context )
@@ -340,6 +343,29 @@ makeBroken broken n1 n2 =
 noteList : Context -> List AbcNote -> Result String ( List VexNote, Context )
 noteList ctx notes =
     foldOverResult ctx notes note
+
+
+
+{- cater for a new header inside the tune body after a line has completed
+   we need to cater for changes in key signature, meter or unit note length
+   which all alter the translation context.  All other headers may be ignored
+-}
+
+
+header : Context -> Header -> Context
+header ctx h =
+    case h of
+        Key mks ->
+            { ctx | modifiedKeySig = mks }
+
+        UnitNoteLength dur ->
+            { ctx | unitNoteLength = dur }
+
+        Meter meter ->
+            { ctx | meter = meter }
+
+        _ ->
+            ctx
 
 
 

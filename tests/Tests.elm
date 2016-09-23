@@ -31,7 +31,7 @@ expectParses s =
                     Expect.pass
 
             Err errs ->
-                Expect.fail "parse error"
+                Expect.fail ("parse error" ++ toString errs)
 
 
 expectScoreMatches : Result String String -> String -> Expectation
@@ -49,7 +49,7 @@ expectScoreMatches target s =
                     Expect.equal target vexResult
 
             Err errs ->
-                Expect.fail "parse error"
+                Expect.fail ("parse error" ++ toString errs)
 
 
 all : Test
@@ -91,9 +91,15 @@ all =
         , test "basic broken right rhythm" <|
             \() ->
                 expectScoreMatches basicBrokenRightRhythmScore basicBrokenRightRhythm
-        , test "basic broken leftt rhythm" <|
+        , test "basic broken left rhythm" <|
             \() ->
                 expectScoreMatches basicBrokenLeftRhythmScore basicBrokenLeftRhythm
+        , test "key change" <|
+            \() ->
+                expectScoreMatches keyChangeScore keyChange
+        , test "meter change" <|
+            \() ->
+                expectScoreMatches meterChangeScore meterChange
         , test "unsupported tuplet" <|
             \() ->
                 expectScoreMatches unsupportedTupletFailure unsupportedTuplet
@@ -243,6 +249,36 @@ basicBrokenLeftRhythm =
 basicBrokenLeftRhythmScore : Result String String
 basicBrokenLeftRhythmScore =
     Ok (defaultStave ++ " notes :8 A/4 :qd B/4 |")
+
+
+keyChange : String
+keyChange =
+    "| ABc |\x0D\nK: D\x0D\n| cde |\x0D\n"
+
+
+keyChangeScore : Result String String
+keyChangeScore =
+    Ok
+        (defaultStave
+            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |"
+            ++ "\x0D\nstave notation=true clef=treble key=D  "
+            ++ "\x0D\n notes | :8 C/5 :8 D/5 :8 E/5 |"
+        )
+
+
+meterChange : String
+meterChange =
+    "| ABc |\x0D\nM: 3/4\x0D\n| cde |\x0D\n"
+
+
+meterChangeScore : Result String String
+meterChangeScore =
+    Ok
+        (defaultStave
+            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |"
+            ++ "\x0D\nstave notation=true clef=treble key=C time=3/4 "
+            ++ "\x0D\n notes | :8 C/5 :8 D/5 :8 E/5 |"
+        )
 
 
 badNoteLength : String
