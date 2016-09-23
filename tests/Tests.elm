@@ -79,6 +79,9 @@ all =
         , test "accidental note" <|
             \() ->
                 expectScoreMatches accidentalNoteScore accidentalNote
+        , test "tie" <|
+            \() ->
+                expectScoreMatches tieScore tie
         , test "simple rest" <|
             \() ->
                 expectScoreMatches simpleRestScore simpleRest
@@ -185,6 +188,16 @@ accidentalNote =
 accidentalNoteScore : Result String String
 accidentalNoteScore =
     Ok (defaultStave ++ " notes :8 A#/4 :8 B##/4 :8 C@/5 :8 D@@/5 :8 En/5 |")
+
+
+tie : String
+tie =
+    "ABc- | c |\x0D\n"
+
+
+tieScore : Result String String
+tieScore =
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 | :8 T C/5 |")
 
 
 simpleRest : String

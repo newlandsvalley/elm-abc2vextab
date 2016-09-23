@@ -21,6 +21,9 @@ type alias Context =
     { modifiedKeySig : ModifiedKeySignature
     , meter : Maybe MeterSignature
     , unitNoteLength : NoteDuration
+    , tied :
+        Bool
+        -- tie the next note
     }
 
 
@@ -223,14 +226,23 @@ note ctx abcNote =
                         { pitchClass = abcNote.pitchClass
                         , accidental = abcNote.accidental
                         , octave = abcNote.octave - 1
-                        , duration =
-                            d
-                            -- not implemented yet
-                        , tied = abcNote.tied
+                        , duration = d
+                        , tied =
+                            ctx.tied
+                            {- in ABC, ties attach to the first note in the pair
+                               but in VexTab, the second
+                            -}
                         }
+
+                    {- pass the tie to the next note via the context -}
+                    newCtx =
+                        if abcNote.tied then
+                            { ctx | tied = True }
+                        else
+                            ctx
                 in
                     -- Ok ( VNote vexNote, ctx )
-                    Ok ( vexNote, ctx )
+                    Ok ( vexNote, newCtx )
 
             Err e ->
                 Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote))
@@ -455,6 +467,7 @@ initialContext t =
         { modifiedKeySig = keySig
         , meter = meter
         , unitNoteLength = unl
+        , tied = False
         }
 
 

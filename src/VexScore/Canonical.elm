@@ -168,6 +168,12 @@ vexNote ctx vnote =
 
         dur =
             noteDur vnote.duration
+
+        tie =
+            if vnote.tied then
+                "T"
+            else
+                ""
     in
         case ctx of
             Chordal ->
@@ -178,7 +184,10 @@ vexNote ctx vnote =
                 pitch
 
             _ ->
-                nicelySpace [ "", dur, pitch ]
+                if vnote.tied then
+                    nicelySpace [ "", dur, tie, pitch ]
+                else
+                    nicelySpace [ "", dur, pitch ]
 
 
 noteDur : VexDuration -> String
