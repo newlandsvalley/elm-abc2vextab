@@ -159,15 +159,12 @@ music ctx m =
                 notesResult =
                     noteList ctx notes
             in
-                if (size /= noteCount) then
-                    Err ("Tuplets with uneven note lengths not supported")
-                else
-                    case notesResult of
-                        Ok ( vnotes, _ ) ->
-                            Ok ( VTuplet size vnotes, ctx )
+                case notesResult of
+                    Ok ( vnotes, _ ) ->
+                        Ok ( VTuplet size vnotes, ctx )
 
-                        Err e ->
-                            Err e
+                    Err e ->
+                        Err e
 
         Chord abcChord ->
             -- not finished - we need to take account of the overall chord duration

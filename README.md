@@ -8,7 +8,6 @@ This is intended to be a utility which translates an __AbcTune__ (defined in [Ab
 VexTab is a pre-alpha release.  There are various features of a score which almost any self-respecting tune will require but which currently remain unsupported.  These include:
 
 * First and second repeats
-* Tuplets with notes of different lengths
 * Slurs (it seems as if these are supported in VexFlow but not yet available in VexTab syntax. The closest approach sappears to be a bend which only associates two adjacent notes)
 * Grace notes
 
@@ -24,8 +23,8 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 * staves - key signature, meter, (treble) clef
 * bar lines
 * notes
-* basic tuplets
-* basic rests
+* tuplets
+* rests
 * basic chords
 * broken rhythm pairs
 * ties

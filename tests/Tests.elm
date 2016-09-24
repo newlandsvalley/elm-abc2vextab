@@ -112,9 +112,9 @@ all =
         , test "meter change" <|
             \() ->
                 expectScoreMatches meterChangeScore meterChange
-        , test "unsupported tuplet" <|
+        , test "mixed tuplet" <|
             \() ->
-                expectScoreMatches unsupportedTupletFailure unsupportedTuplet
+                expectScoreMatches mixedTupletScore mixedTuplet
         , test "bad note length" <|
             \() ->
                 expectScoreMatches badNoteLengthFailure badNoteLength
@@ -227,23 +227,19 @@ triplet =
     "(3ABc |\x0D\n"
 
 
-
--- note - VexTab support not complete yet for tuplets
-
-
 tripletScore : Result String String
 tripletScore =
-    Ok (defaultStave ++ " notes A/4-B/4-C/5 ^3^ |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3,3^ |")
 
 
-unsupportedTuplet : String
-unsupportedTuplet =
+mixedTuplet : String
+mixedTuplet =
     "(3:2:4 A2B2cd |\x0D\n"
 
 
-unsupportedTupletFailure : Result String String
-unsupportedTupletFailure =
-    Err "Tuplets with uneven note lengths not supported"
+mixedTupletScore : Result String String
+mixedTupletScore =
+    Ok (defaultStave ++ " notes :q A/4 :q B/4 :8 C/5 :8 D/5 ^3,4^ |")
 
 
 basicChord : String

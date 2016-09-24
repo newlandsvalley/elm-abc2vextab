@@ -128,11 +128,13 @@ vexItem vi =
         VTuplet size vnotes ->
             " "
                 ++ (List.map (vexNote Tupleted) vnotes
-                        |> List.intersperse "-"
+                        |> List.intersperse " "
                         |> String.concat
                    )
                 ++ " ^"
                 ++ toString size
+                ++ ","
+                ++ toString (List.length vnotes)
                 ++ "^"
 
         VChord dur vnotes ->
@@ -181,8 +183,7 @@ vexNote ctx vnote =
                 pitch
 
             Tupleted ->
-                -- this format not supported in VexTab nicelySpace [ dur, pitch ]
-                pitch
+                nicelySpace [ dur, pitch ]
 
             _ ->
                 if vnote.tied then
