@@ -100,6 +100,12 @@ all =
         , test "staccato" <|
             \() ->
                 expectScoreMatches staccatoScore staccato
+        , test "bowing" <|
+            \() ->
+                expectScoreMatches bowingScore bowing
+        , test "fermata" <|
+            \() ->
+                expectScoreMatches fermataScore fermata
         , test "key change" <|
             \() ->
                 expectScoreMatches keyChangeScore keyChange
@@ -278,6 +284,26 @@ staccato =
 staccatoScore : Result String String
 staccatoScore =
     Ok (defaultStave ++ " notes :8 A/4 $.a./bottom.$ :8 D/5 $.a./top.$ |")
+
+
+bowing : String
+bowing =
+    "uA vd |\x0D\n"
+
+
+bowingScore : Result String String
+bowingScore =
+    Ok (defaultStave ++ " notes :8 A/4 $.a|/top.$ :8 D/5 $.am/top.$ |")
+
+
+fermata : String
+fermata =
+    "HA Hd |\x0D\n"
+
+
+fermataScore : Result String String
+fermataScore =
+    Ok (defaultStave ++ " notes :8 A/4 $.a@a/top.$ :8 D/5 $.a@a/top.$ |")
 
 
 keyChange : String

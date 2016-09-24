@@ -310,20 +310,47 @@ mode m =
 vexDecoration : VexNote -> String
 vexDecoration v =
     let
-        position =
+        formatDecoration : Bool -> String -> String
+        formatDecoration isTop vexCode =
+            let
+                position =
+                    if isTop then
+                        "/top"
+                    else
+                        "/bottom"
+            in
+                " $.a" ++ vexCode ++ position ++ ".$"
+
+        isTopPosition =
             if v.octave > 4 then
-                "/top"
+                True
             else if v.octave < 4 then
-                "/bottom"
+                False
                 --else if (B == v.pitchClass) then
-                --    "/top"
+                --    true
             else
-                "/bottom"
+                False
     in
         case v.decoration of
             -- staccato
             Just "." ->
-                " $.a." ++ position ++ ".$"
+                formatDecoration isTopPosition "."
+
+            -- fermata
+            Just "H" ->
+                formatDecoration True "@a"
+
+            -- accent
+            Just "L" ->
+                formatDecoration True ">"
+
+            -- up bow
+            Just "u" ->
+                formatDecoration True "|"
+
+            -- down bow
+            Just "v" ->
+                formatDecoration True "m"
 
             _ ->
                 ""

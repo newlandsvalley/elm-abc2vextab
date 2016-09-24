@@ -30,11 +30,11 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 * broken rhythm pairs
 * ties
 * headers between stave lines
+* Decorations (up and down bow, staccato, accent, fermata)
 
 ### next things to do
 
 * Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab?
 * What happens if the tune has very low notes?  How to detect a bass clef?
-* Annotations
-
+* Further decorations
