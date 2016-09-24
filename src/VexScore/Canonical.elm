@@ -14,6 +14,7 @@ import Abc.ParseTree
         ( Accidental(..)
         , Mode(..)
         , AbcNote
+        , PitchClass(..)
         , Bar
         , Thickness(..)
         , Repeat(..)
@@ -146,11 +147,7 @@ vexItem vi =
             vexNote Staved vnote1
                 ++ vexNote Staved vnote2
 
-        {- the following are not yet implemented in VexTab:
-           grace notes
-           first and second repeats
-        -}
-        _ ->
+        VIgnore ->
             ""
 
 
@@ -175,6 +172,9 @@ vexNote ctx vnote =
                 "T"
             else
                 ""
+
+        decor =
+            vexDecoration vnote
     in
         case ctx of
             Chordal ->
@@ -186,9 +186,9 @@ vexNote ctx vnote =
 
             _ ->
                 if vnote.tied then
-                    nicelySpace [ "", dur, tie, pitch ]
+                    nicelySpace [ "", dur, tie, pitch ] ++ decor
                 else
-                    nicelySpace [ "", dur, pitch ]
+                    nicelySpace [ "", dur, pitch ] ++ decor
 
 
 noteDur : VexDuration -> String
@@ -305,3 +305,25 @@ mode m =
         -- we need to trap this in translate - probably by converting modes to canonical forms
         _ ->
             "error not supported"
+
+
+vexDecoration : VexNote -> String
+vexDecoration v =
+    let
+        position =
+            if v.octave > 4 then
+                "/top"
+            else if v.octave < 4 then
+                "/bottom"
+                --else if (B == v.pitchClass) then
+                --    "/top"
+            else
+                "/bottom"
+    in
+        case v.decoration of
+            -- staccato
+            Just "." ->
+                " $.a." ++ position ++ ".$"
+
+            _ ->
+                ""

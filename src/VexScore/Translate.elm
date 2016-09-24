@@ -24,6 +24,9 @@ type alias Context =
     , tied :
         Bool
         -- tie the next note
+    , decoration :
+        Maybe String
+        -- decorate the next note (staccato etc)
     }
 
 
@@ -212,8 +215,11 @@ music ctx m =
                     ( _, Err e ) ->
                         Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote2))
 
+        Decoration decor ->
+            Ok ( VIgnore, { ctx | decoration = Just decor } )
+
         _ ->
-            Ok ( VUnimplemented, ctx )
+            Ok ( VIgnore, ctx )
 
 
 note : Context -> AbcNote -> Result String ( VexNote, Context )
@@ -235,11 +241,15 @@ note ctx abcNote =
                             {- in ABC, ties attach to the first note in the pair
                                but in VexTab, the second
                             -}
+                        , decoration = ctx.decoration
                         }
 
-                    {- pass the tie to the next note via the context -}
+                    {- pass the tie to the next note via the context
+                       and remove any note decoration (which would otherwise
+                       apply to the next note...
+                    -}
                     newCtx =
-                        { ctx | tied = abcNote.tied }
+                        { ctx | tied = abcNote.tied, decoration = Nothing }
                 in
                     -- Ok ( VNote vexNote, ctx )
                     Ok ( vexNote, newCtx )
@@ -468,6 +478,7 @@ initialContext t =
         , meter = meter
         , unitNoteLength = unl
         , tied = False
+        , decoration = Nothing
         }
 
 

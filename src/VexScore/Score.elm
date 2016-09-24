@@ -34,7 +34,7 @@ type VexItem
     | VTuplet Int (List VexNote)
     | VChord VexDuration (List VexNote)
     | VNotePair VexNote VexNote
-    | VUnimplemented
+    | VIgnore
 
 
 type alias VexStave =
@@ -73,4 +73,7 @@ type alias VexNote =
     , tied :
         Bool
         -- to the next note
+    , decoration :
+        Maybe String
+        -- is the note decorated (staccato etc)
     }

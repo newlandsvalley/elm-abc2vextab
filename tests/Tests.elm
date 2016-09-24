@@ -97,6 +97,9 @@ all =
         , test "basic broken left rhythm" <|
             \() ->
                 expectScoreMatches basicBrokenLeftRhythmScore basicBrokenLeftRhythm
+        , test "staccato" <|
+            \() ->
+                expectScoreMatches staccatoScore staccato
         , test "key change" <|
             \() ->
                 expectScoreMatches keyChangeScore keyChange
@@ -265,6 +268,16 @@ basicBrokenLeftRhythm =
 basicBrokenLeftRhythmScore : Result String String
 basicBrokenLeftRhythmScore =
     Ok (defaultStave ++ " notes :8 A/4 :qd B/4 |")
+
+
+staccato : String
+staccato =
+    ".A .d |\x0D\n"
+
+
+staccatoScore : Result String String
+staccatoScore =
+    Ok (defaultStave ++ " notes :8 A/4 $.a./bottom.$ :8 D/5 $.a./top.$ |")
 
 
 keyChange : String
