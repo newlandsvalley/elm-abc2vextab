@@ -9,6 +9,8 @@ VexTab is a pre-alpha release.  There are various features of a score which almo
 
 * First and second repeats
 * Tuplets with notes of different lengths
+* Slurs (it seems as if these are supported in VexFlow but not yet available in VexTab syntax. The closest approach sappears to be a bend which only associates two adjacent notes)
+* Grace notes
 
 ## Example
 
@@ -27,12 +29,12 @@ There is a single example __abc2score.html__ which is built from __examples/Abc2
 * basic chords
 * broken rhythm pairs
 * ties
+* headers between stave lines
 
 ### next things to do
 
 * Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab?
-* Key, TimeSig, UnitNoteLength changes for in-body headers
 * What happens if the tune has very low notes?  How to detect a bass clef?
 * Annotations
-* Slurs
+

@@ -18,6 +18,7 @@ type alias Score =
 type VexBodyPart
     = VLine VexLine
     | VContextChange
+    | VEmptyLine
 
 
 type alias VexLine =

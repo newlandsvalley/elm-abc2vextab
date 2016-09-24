@@ -56,7 +56,8 @@ vexBodyPart bp =
         VLine line ->
             vexLine line
 
-        VContextChange ->
+        _ ->
+            -- VContextChange or VEmptyLine
             ""
 
 

@@ -112,6 +112,9 @@ all =
         , test "bad chord length" <|
             \() ->
                 expectScoreMatches badChordLengthFailure badChordLength
+        , test "empty line" <|
+            \() ->
+                expectScoreMatches emptyLineScore emptyLine
         ]
 
 
@@ -192,12 +195,12 @@ accidentalNoteScore =
 
 tie : String
 tie =
-    "ABc- | c |\x0D\n"
+    "ABc- | cd |\x0D\n"
 
 
 tieScore : Result String String
 tieScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 | :8 T C/5 |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 | :8 T C/5 :8 D/5 |")
 
 
 simpleRest : String
@@ -317,3 +320,13 @@ badChordLengthFailure =
 defaultStave : String
 defaultStave =
     "\x0D\nstave notation=true clef=treble key=C time=4/4 \x0D\n"
+
+
+emptyLine : String
+emptyLine =
+    "AB |  \x0D\n\x0D\n"
+
+
+emptyLineScore : Result String String
+emptyLineScore =
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |")

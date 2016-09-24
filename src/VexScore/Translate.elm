@@ -82,7 +82,10 @@ bodyPart : Context -> BodyPart -> Result String ( VexBodyPart, Context )
 bodyPart ctx bp =
     case bp of
         Score musicline ->
-            vexLine ctx musicline
+            if emptyLine musicline then
+                Ok ( VEmptyLine, ctx )
+            else
+                vexLine ctx musicline
 
         BodyInfo h ->
             let
@@ -236,10 +239,7 @@ note ctx abcNote =
 
                     {- pass the tie to the next note via the context -}
                     newCtx =
-                        if abcNote.tied then
-                            { ctx | tied = True }
-                        else
-                            ctx
+                        { ctx | tied = abcNote.tied }
                 in
                     -- Ok ( VNote vexNote, ctx )
                     Ok ( vexNote, newCtx )
@@ -537,3 +537,27 @@ foldOverResult ctx aline fmus =
 
                 _ ->
                     result
+
+
+
+{- check if a line of music is effectively empty -}
+
+
+emptyLine : MusicLine -> Bool
+emptyLine musicLine =
+    let
+        f music =
+            case music of
+                Spacer _ ->
+                    True
+
+                Ignore ->
+                    True
+
+                Continuation ->
+                    True
+
+                _ ->
+                    False
+    in
+        List.all f musicLine
