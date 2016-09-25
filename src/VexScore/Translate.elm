@@ -213,12 +213,21 @@ music ctx m =
                 note1Result =
                     note ctx bNote1
 
+                -- pass the context fron note1 to note 2
+                ctx1 =
+                    case note1Result of
+                        Ok ( _, n1ctx ) ->
+                            n1ctx
+
+                        _ ->
+                            ctx
+
                 note2Result =
-                    note ctx bNote2
+                    note ctx1 bNote2
             in
                 case ( note1Result, note2Result ) of
-                    ( Ok ( vnote1, _ ), Ok ( vnote2, _ ) ) ->
-                        Ok ( VNotePair vnote1 vnote2, ctx )
+                    ( Ok ( vnote1, _ ), Ok ( vnote2, ctx2 ) ) ->
+                        Ok ( VNotePair vnote1 vnote2, ctx2 )
 
                     ( Err e, _ ) ->
                         Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote1))
