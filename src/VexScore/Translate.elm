@@ -135,7 +135,19 @@ music : Context -> Music -> Result String ( VexItem, Context )
 music ctx m =
     case m of
         Barline bar ->
-            Ok ( VBar bar, ctx )
+            let
+                newCtx =
+                    case bar.iteration of
+                        Just 1 ->
+                            { ctx | decoration = Just "1" }
+
+                        Just 2 ->
+                            { ctx | decoration = Just "2" }
+
+                        _ ->
+                            ctx
+            in
+                Ok ( VBar bar, newCtx )
 
         Note abcNote ->
             note ctx abcNote

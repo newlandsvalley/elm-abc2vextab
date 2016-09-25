@@ -267,7 +267,7 @@ view model =
                 , value model.abc
                 , onInput AbcText
                 , taStyle
-                , cols 70
+                , cols 78
                 , rows 16
                 , autocomplete False
                 , spellcheck False

@@ -353,5 +353,12 @@ vexDecoration v =
             Just "v" ->
                 formatDecoration True "m"
 
+            -- gross hack for 1st and 2nd repeats
+            Just "1" ->
+                " $.top.$ $1───$"
+
+            Just "2" ->
+                " $.top.$ $2───$"
+
             _ ->
                 ""
