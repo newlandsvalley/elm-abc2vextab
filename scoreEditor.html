@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Score Editor</title>
+    <link rel="stylesheet" type="text/css" href="examples/assets/css/vextab.css">
+
+  </head>
+  <body>
+    <div id="elmScoreEditor"></div>
+    <script src="js/vextab-div.js"></script>
+    <script src="examples/distjs/elmScoreEditor.js"></script>
+    <script>
+    var node = document.getElementById('elmScoreEditor');
+    var myapp = Elm.ScoreEditor.embed(node);
+    </script>
+    <script src="js/nativeVexTab.js"></script>
+    <script src="js/nativeFileIO.js"></script>
+
+
+  </body>
+</html>

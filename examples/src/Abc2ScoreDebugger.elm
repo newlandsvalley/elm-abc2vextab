@@ -1,4 +1,4 @@
-module Abc2Score exposing (..)
+module Abc2ScoreDebugger exposing (..)
 
 import Html exposing (Html, Attribute, text, div, input, button, textarea, canvas, p)
 import Html.Attributes exposing (..)
