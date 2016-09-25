@@ -139,6 +139,7 @@ update msg model =
                             { model
                                 | abc = f.contents
                                 , fileName = Just f.name
+                                , error = Nothing
                             }
 
                         _ =
