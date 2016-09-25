@@ -23,6 +23,7 @@ __abc2ScoreDebugger.html__  allows you to enter ABC text and then attempt to ren
 ### done
 
 * staves - key signature, meter, (treble) clef
+* modal keys
 * bar lines
 * notes
 * tuplets
@@ -35,7 +36,6 @@ __abc2ScoreDebugger.html__  allows you to enter ABC text and then attempt to ren
 
 ### next things to do
 
-* Normalise modal key signatures - needs a refactoring from Abc Parser
 * Inline headers - are they supported by VexTab?
 * What happens if the tune has very low notes?  How to detect a bass clef?
 * Further decorations

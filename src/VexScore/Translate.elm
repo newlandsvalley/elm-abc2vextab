@@ -8,7 +8,7 @@ module VexScore.Translate exposing (translate, translateText)
 import Abc.ParseTree exposing (..)
 import Abc.Canonical as AbcText
 import Abc exposing (parse, parseError)
-import Music.Notation exposing (getHeaderMap, dotFactor)
+import Music.Notation exposing (getHeaderMap, dotFactor, normaliseModalKey)
 import VexScore.Score exposing (..)
 import Dict exposing (Dict, get)
 import Result exposing (Result)
@@ -102,7 +102,9 @@ vexLine : Context -> MusicLine -> Result String ( VexBodyPart, Context )
 vexLine ctx line =
     let
         mKey =
-            Just (fst ctx.modifiedKeySig)
+            (fst ctx.modifiedKeySig)
+                |> normaliseMode
+                |> Just
 
         vexStave =
             { clef = Treble, mKey = mKey, mMeter = ctx.meter }
@@ -545,6 +547,22 @@ foldOverResult ctx aline fmus =
 
                 _ ->
                     result
+
+
+normaliseMode : KeySignature -> KeySignature
+normaliseMode ks =
+    case ks.mode of
+        Ionian ->
+            ks
+
+        Major ->
+            ks
+
+        Minor ->
+            ks
+
+        _ ->
+            normaliseModalKey ks
 
 
 

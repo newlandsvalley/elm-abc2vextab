@@ -70,6 +70,9 @@ all =
         , test "minor key" <|
             \() ->
                 expectScoreMatches minorKeyScore minorKey
+        , test "modal key" <|
+            \() ->
+                expectScoreMatches modalKeyScore modalKey
         , test "modified key unsupported" <|
             \() ->
                 expectScoreMatches modifiedKeyFailure modifiedKey
@@ -165,6 +168,16 @@ minorKey =
 minorKeyScore : Result String String
 minorKeyScore =
     Ok "\x0D\nstave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4"
+
+
+modalKey : String
+modalKey =
+    "M: 3/4\x0D\nK: FMix\x0D\n|A\x0D\n"
+
+
+modalKeyScore : Result String String
+modalKeyScore =
+    Ok "\x0D\nstave notation=true clef=treble key=Bb time=3/4 \x0D\n notes | :8 A/4"
 
 
 twoLines : String
