@@ -11,6 +11,11 @@ VexTab is a pre-alpha release.  There are various features of a score which almo
 * Slurs (it seems as if these are supported in VexFlow but not yet available in VexTab syntax. The closest approach appears to be a bend which only associates two adjacent notes)
 * Grace notes
 
+There are some required features where it is unclear whether or not VexTab supports them:
+
+* Changing time signature, key, clef mid-stave
+* Textual attributes of the complete tune (title, tempo, composer etc.)
+
 ## examples
 
 __scoreEditor.html__ is an interactive editor for ABC scores.  As each edit is made to the ABC, then, (assuming it is valid), the amended score is displayed. It is built from ScoreEditor.elm.  To build, cd to the examples directory and invoke compilee.sh.
@@ -38,4 +43,8 @@ __abc2ScoreDebugger.html__  allows you to enter ABC text and then attempt to ren
 
 * Inline headers - are they supported by VexTab?
 * What happens if the tune has very low notes?  How to detect a bass clef?
-* Further decorations
+* Further decorations?
+
+### notes
+
+* Although unsupported in VexTab, first and second repeats are 'hacked' using text decorations.

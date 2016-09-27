@@ -137,7 +137,7 @@ oneLine =
 
 oneLineScore : Result String String
 oneLineScore =
-    Ok "\x0D\nstave notation=true clef=treble key=D time=3/4 \x0D\n notes | :8 A/4"
+    Ok (options ++ "stave notation=true clef=treble key=D time=3/4 \x0D\n notes | :8 A/4\x0D\n")
 
 
 modifiedKey : String
@@ -157,7 +157,7 @@ sharpKey =
 
 sharpKeyScore : Result String String
 sharpKeyScore =
-    Ok "\x0D\nstave notation=true clef=treble key=F# time=3/4 \x0D\n notes | :8 A/4"
+    Ok (options ++ "stave notation=true clef=treble key=F# time=3/4 \x0D\n notes | :8 A/4\x0D\n")
 
 
 minorKey : String
@@ -167,7 +167,7 @@ minorKey =
 
 minorKeyScore : Result String String
 minorKeyScore =
-    Ok "\x0D\nstave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4"
+    Ok (options ++ "stave notation=true clef=treble key=Gm time=3/4 \x0D\n notes | :8 A/4\x0D\n")
 
 
 modalKey : String
@@ -177,7 +177,7 @@ modalKey =
 
 modalKeyScore : Result String String
 modalKeyScore =
-    Ok "\x0D\nstave notation=true clef=treble key=Bb time=3/4 \x0D\n notes | :8 A/4"
+    Ok (options ++ "stave notation=true clef=treble key=Bb time=3/4 \x0D\n notes | :8 A/4\x0D\n")
 
 
 twoLines : String
@@ -192,7 +192,7 @@ repeats =
 
 repeatsScore : Result String String
 repeatsScore =
-    Ok (defaultStave ++ " notes =|: :8 A/4 :8 B/4 =:|")
+    Ok (defaultStave ++ " notes =|: :8 A/4 :8 B/4 =:|\x0D\n")
 
 
 simpleNote : String
@@ -202,7 +202,7 @@ simpleNote =
 
 simpleNoteScore : Result String String
 simpleNoteScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |\x0D\n")
 
 
 accidentalNote : String
@@ -212,7 +212,7 @@ accidentalNote =
 
 accidentalNoteScore : Result String String
 accidentalNoteScore =
-    Ok (defaultStave ++ " notes :8 A#/4 :8 B##/4 :8 C@/5 :8 D@@/5 :8 En/5 |")
+    Ok (defaultStave ++ " notes :8 A#/4 :8 B##/4 :8 C@/5 :8 D@@/5 :8 En/5 |\x0D\n")
 
 
 tie : String
@@ -222,7 +222,7 @@ tie =
 
 tieScore : Result String String
 tieScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 | :8 T C/5 :8 D/5 |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 | :8 T C/5 :8 D/5 |\x0D\n")
 
 
 simpleRest : String
@@ -232,7 +232,7 @@ simpleRest =
 
 simpleRestScore : Result String String
 simpleRestScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 ## |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 ## |\x0D\n")
 
 
 triplet : String
@@ -242,7 +242,7 @@ triplet =
 
 tripletScore : Result String String
 tripletScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3,3^ |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 :8 C/5 ^3,3^ |\x0D\n")
 
 
 mixedTuplet : String
@@ -252,7 +252,7 @@ mixedTuplet =
 
 mixedTupletScore : Result String String
 mixedTupletScore =
-    Ok (defaultStave ++ " notes :q A/4 :q B/4 :8 C/5 :8 D/5 ^3,4^ |")
+    Ok (defaultStave ++ " notes :q A/4 :q B/4 :8 C/5 :8 D/5 ^3,4^ |\x0D\n")
 
 
 basicChord : String
@@ -262,7 +262,7 @@ basicChord =
 
 basicChordScore : Result String String
 basicChordScore =
-    Ok (defaultStave ++ " notes ( A/4.B/4.C/5 ) |")
+    Ok (defaultStave ++ " notes ( A/4.B/4.C/5 ) |\x0D\n")
 
 
 basicBrokenRightRhythm : String
@@ -272,7 +272,7 @@ basicBrokenRightRhythm =
 
 basicBrokenRightRhythmScore : Result String String
 basicBrokenRightRhythmScore =
-    Ok (defaultStave ++ " notes :8d A/4 :16 B/4 |")
+    Ok (defaultStave ++ " notes :8d A/4 :16 B/4 |\x0D\n")
 
 
 basicBrokenLeftRhythm : String
@@ -282,7 +282,7 @@ basicBrokenLeftRhythm =
 
 basicBrokenLeftRhythmScore : Result String String
 basicBrokenLeftRhythmScore =
-    Ok (defaultStave ++ " notes :8 A/4 :qd B/4 |")
+    Ok (defaultStave ++ " notes :8 A/4 :qd B/4 |\x0D\n")
 
 
 staccato : String
@@ -292,7 +292,7 @@ staccato =
 
 staccatoScore : Result String String
 staccatoScore =
-    Ok (defaultStave ++ " notes :8 A/4 $.a./bottom.$ :8 D/5 $.a./top.$ |")
+    Ok (defaultStave ++ " notes :8 A/4 $.a./bottom.$ :8 D/5 $.a./top.$ |\x0D\n")
 
 
 bowing : String
@@ -302,7 +302,7 @@ bowing =
 
 bowingScore : Result String String
 bowingScore =
-    Ok (defaultStave ++ " notes :8 A/4 $.a|/top.$ :8 D/5 $.am/top.$ |")
+    Ok (defaultStave ++ " notes :8 A/4 $.a|/top.$ :8 D/5 $.am/top.$ |\x0D\n")
 
 
 fermata : String
@@ -312,7 +312,7 @@ fermata =
 
 fermataScore : Result String String
 fermataScore =
-    Ok (defaultStave ++ " notes :8 A/4 $.a@a/top.$ :8 D/5 $.a@a/top.$ |")
+    Ok (defaultStave ++ " notes :8 A/4 $.a@a/top.$ :8 D/5 $.a@a/top.$ |\x0D\n")
 
 
 keyChange : String
@@ -324,9 +324,9 @@ keyChangeScore : Result String String
 keyChangeScore =
     Ok
         (defaultStave
-            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |"
-            ++ "\x0D\nstave notation=true clef=treble key=D  "
-            ++ "\x0D\n notes | :8 C/5 :8 D/5 :8 E/5 |"
+            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |\x0D\n"
+            ++ "stave notation=true clef=treble key=D  \x0D\n"
+            ++ " notes | :8 C/5 :8 D/5 :8 E/5 |\x0D\n"
         )
 
 
@@ -339,9 +339,9 @@ meterChangeScore : Result String String
 meterChangeScore =
     Ok
         (defaultStave
-            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |"
-            ++ "\x0D\nstave notation=true clef=treble key=C time=3/4 "
-            ++ "\x0D\n notes | :8 C/5 :8 D/5 :8 E/5 |"
+            ++ " notes | :8 A/4 :8 B/4 :8 C/5 |\x0D\n"
+            ++ "stave notation=true clef=treble key=C time=3/4 \x0D\n"
+            ++ " notes | :8 C/5 :8 D/5 :8 E/5 |\x0D\n"
         )
 
 
@@ -367,7 +367,13 @@ badChordLengthFailure =
 
 defaultStave : String
 defaultStave =
-    "\x0D\nstave notation=true clef=treble key=C time=4/4 \x0D\n"
+    options
+        ++ "stave notation=true clef=treble key=C time=4/4 \x0D\n"
+
+
+options : String
+options =
+    "options beam-rests=false\x0D\n"
 
 
 emptyLine : String
@@ -377,4 +383,4 @@ emptyLine =
 
 emptyLineScore : Result String String
 emptyLineScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |")
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |\x0D\n")
