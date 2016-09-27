@@ -16,6 +16,12 @@ There are some required features where it is unclear whether or not VexTab suppo
 * Changing time signature, key, clef mid-stave
 * Textual attributes of the complete tune (title, tempo, composer etc.)
 
+There are also some outstanding VexTab bugs which continue to bite us
+
+* Quadruplets in triple time do not display properly.  It looks to me as if tuplets in general only display properly in common time.
+* No option to set a time signature 'quietly' so that it doesn't display in the stave but still takes effect (in order to drive auto-beaming etc.)
+
+
 ## examples
 
 __scoreEditor.html__ is an interactive editor for ABC scores.  As each edit is made to the ABC, then, (assuming it is valid), the amended score is displayed. It is built from ScoreEditor.elm.  To build, cd to the examples directory and invoke compilee.sh.
