@@ -246,6 +246,10 @@ music ctx m =
         Decoration decor ->
             Ok ( VIgnore, { ctx | decoration = Just decor } )
 
+        -- Inline headers not properly supported yet in VexTab
+        Inline header ->
+            inlineHeader ctx header
+
         Continuation ->
             Ok ( VIgnore, { ctx | continuation = True } )
 
@@ -402,6 +406,8 @@ noteList ctx notes =
 {- cater for a new header inside the tune body after a line has completed
    we need to cater for changes in key signature, meter or unit note length
    which all alter the translation context.  All other headers may be ignored
+
+   These are headers within the tune body occupying a line of their own
 -}
 
 
@@ -419,6 +425,29 @@ header ctx h =
 
         _ ->
             ctx
+
+
+
+{- Cater for inline headers (embedded within the growing stave)
+   These are not properly supported yet by VexTab and so
+   changes in key or time signature raise errors
+-}
+
+
+inlineHeader : Context -> Header -> Result String ( VexItem, Context )
+inlineHeader ctx h =
+    case h of
+        Key mks ->
+            Err "inline key signature changes not supported"
+
+        Meter meter ->
+            Err "inline time signature changes not supported"
+
+        UnitNoteLength dur ->
+            Ok ( VIgnore, { ctx | unitNoteLength = dur } )
+
+        _ ->
+            Ok ( VIgnore, ctx )
 
 
 

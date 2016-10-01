@@ -8,6 +8,7 @@ import VexScore.Translate exposing (translate)
 import VexScore.Canonical exposing (toScoreText)
 import Debug exposing (..)
 
+
 tuneToScoreText : AbcTune -> Result String String
 tuneToScoreText t =
     translate t
@@ -129,6 +130,15 @@ all =
         , test "continuation" <|
             \() ->
                 expectScoreMatches continuationScore continuation
+        , test "inline key change unsupported" <|
+            \() ->
+                expectScoreMatches inlineKeyChangeFailure inlineKeyChange
+        , test "inline meter change unsupported" <|
+            \() ->
+                expectScoreMatches inlineMeterChangeFailure inlineMeterChange
+        , test "inline note length change is supported" <|
+            \() ->
+                expectScoreMatches inlineNoteLenChangeScore inlineNoteLenChange
         ]
 
 
@@ -367,6 +377,56 @@ badChordLengthFailure =
     Err "Chord too long or too dotted: [A/B/c/]30"
 
 
+emptyLine : String
+emptyLine =
+    "AB |  \x0D\n\x0D\n"
+
+
+emptyLineScore : Result String String
+emptyLineScore =
+    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |\x0D\n")
+
+
+continuation : String
+continuation =
+    "|ABc |\\ comment \x0D\n  def |\x0D\n"
+
+
+continuationScore : Result String String
+continuationScore =
+    Ok (defaultStave ++ " notes | :8 A/4 :8 B/4 :8 C/5 |\x0D\n notes :8 D/5 :8 E/5 :8 F/5 |\x0D\n")
+
+
+inlineKeyChange : String
+inlineKeyChange =
+    "K: D\x0D\n| ABC |[K: A] def|\x0D\n"
+
+
+inlineKeyChangeFailure : Result String String
+inlineKeyChangeFailure =
+    Err "inline key signature changes not supported"
+
+
+inlineMeterChange : String
+inlineMeterChange =
+    "M: 4/4\x0D\n| ABC |[M: 3/4] def|\x0D\n"
+
+
+inlineMeterChangeFailure : Result String String
+inlineMeterChangeFailure =
+    Err "inline time signature changes not supported"
+
+
+inlineNoteLenChange : String
+inlineNoteLenChange =
+    "L: 1/8\x0D\n| ABC |[L: 1/16] def|\x0D\n"
+
+
+inlineNoteLenChangeScore : Result String String
+inlineNoteLenChangeScore =
+    Ok (defaultStave ++ " notes | :8 A/4 :8 B/4 :8 C/4 | :16 D/5 :16 E/5 :16 F/5 |\x0D\n")
+
+
 defaultStave : String
 defaultStave =
     options
@@ -376,22 +436,3 @@ defaultStave =
 options : String
 options =
     "options beam-rests=false\x0D\n"
-
-
-emptyLine : String
-emptyLine =
-    "AB |  \x0D\n\x0D\n"
-
-
-emptyLineScore : Result String String
-emptyLineScore =
-    Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |\x0D\n")
-    
-continuation : String
-continuation =
-    "|ABc |\\ comment \r\n  def |\r\n"  
-    
-continuationScore : Result String String
-continuationScore =
-  Ok (defaultStave ++ " notes | :8 A/4 :8 B/4 :8 C/5 |\x0D\n notes :8 D/5 :8 E/5 :8 F/5 |\r\n")
-    
