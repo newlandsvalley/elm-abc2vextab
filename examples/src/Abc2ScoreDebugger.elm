@@ -25,10 +25,15 @@ type Msg
     | NoOp
 
 
+type VexTranslationState
+    = Untranslated
+    | Translated (Maybe String)
+
+
 type alias Model =
     { abc : String
+    , vexTranslationState : VexTranslationState
     , vextab : VexTab.Model
-    , error : Maybe String
     }
 
 
@@ -51,8 +56,8 @@ init =
             VexTab.init defaultConfig
     in
         { abc = ""
+        , vexTranslationState = Untranslated
         , vextab = vextabModel
-        , error = Nothing
         }
             ! [ Cmd.map VexTabMsg vextabCmd ]
 
@@ -61,7 +66,11 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AbcText s ->
-            ( { model | abc = s, error = Nothing }
+            ( { model
+                | abc = s
+                , vextab = VexTab.Model Nothing Nothing
+                , vexTranslationState = Untranslated
+              }
             , Cmd.none
             )
 
@@ -79,10 +88,14 @@ update msg model =
                             ( newVextab, cmd ) =
                                 VexTab.update (VexTab.RequestRenderScore (toScoreText vexScore)) model.vextab
                         in
-                            { model | vextab = newVextab } ! [ Cmd.map VexTabMsg cmd ]
+                            { model
+                                | vextab = newVextab
+                                , vexTranslationState = Translated Nothing
+                            }
+                                ! [ Cmd.map VexTabMsg cmd ]
 
                     Err e ->
-                        { model | error = Just e } ! [ Cmd.none ]
+                        { model | vexTranslationState = Translated (Just e) } ! [ Cmd.none ]
 
         VexTabMsg vextabMsg ->
             let
@@ -136,6 +149,32 @@ viewMaybe mpe =
             text ""
 
 
+viewTranslationState : VexTranslationState -> Html Msg
+viewTranslationState vte =
+    case vte of
+        Untranslated ->
+            text ""
+
+        Translated maybe ->
+            viewMaybe maybe
+
+
+
+{- hide the score if it's untranslated into Vex or if it's a vexNote
+   translation error or a vex error in producing the score
+-}
+
+
+hideScore : Model -> Bool
+hideScore model =
+    case model.vexTranslationState of
+        Translated Nothing ->
+            isJust model.vextab.error
+
+        _ ->
+            True
+
+
 view : Model -> Html Msg
 view model =
     div []
@@ -163,11 +202,12 @@ view model =
         , div []
             [ viewMaybe model.vextab.text ]
         , div []
-            [ viewMaybe model.error ]
+            [ viewTranslationState model.vexTranslationState ]
         , div []
             [ canvas
                 [ id "vextab"
-                , hidden (isJust model.error || isJust model.vextab.error)
+                  -- , hidden (isTranslationError model.vexTranslationState || isJust model.vextab.error)
+                , hidden (hideScore model)
                 ]
                 []
             ]
