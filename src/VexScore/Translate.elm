@@ -27,7 +27,7 @@ type alias Context =
     , decoration :
         Maybe String
         -- decorate the next note (staccato etc)
-    , continuation : 
+    , continuation :
         Bool
         -- end of line continuation
     }
@@ -110,16 +110,18 @@ vexLine ctx line =
                 |> Just
 
         vexStave =
-          if (ctx.continuation) then
-            Nothing
-          else
-            Just { clef = Treble, mKey = mKey, mMeter = ctx.meter }
+            if (ctx.continuation) then
+                Nothing
+            else
+                Just { clef = Treble, mKey = mKey, mMeter = ctx.meter }
 
         {- now we've processed the stave, remove the key signature from the context#
            which we don't need to generate any longer unless there's a key changes
+           and now we've processed any possible end-of-line continuation then
+           remove it from the comtext
         -}
         staveCtx =
-            { ctx | meter = Nothing }
+            { ctx | meter = Nothing, continuation = False }
 
         itemsRes =
             musicLine staveCtx line
@@ -242,8 +244,8 @@ music ctx m =
                         Err ("Note " ++ e ++ ": " ++ (AbcText.abcNote abcNote2))
 
         Decoration decor ->
-            Ok ( VIgnore, { ctx | decoration = Just decor } ) 
-            
+            Ok ( VIgnore, { ctx | decoration = Just decor } )
+
         Continuation ->
             Ok ( VIgnore, { ctx | continuation = True } )
 
@@ -278,7 +280,7 @@ note ctx abcNote =
                        apply to the next note...
                     -}
                     newCtx =
-                        { ctx | tied = abcNote.tied, decoration = Nothing, continuation = False }
+                        { ctx | tied = abcNote.tied, decoration = Nothing }
                 in
                     -- Ok ( VNote vexNote, ctx )
                     Ok ( vexNote, newCtx )
