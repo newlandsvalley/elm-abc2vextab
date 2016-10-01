@@ -8,7 +8,6 @@ import VexScore.Translate exposing (translate)
 import VexScore.Canonical exposing (toScoreText)
 import Debug exposing (..)
 
-
 tuneToScoreText : AbcTune -> Result String String
 tuneToScoreText t =
     translate t
@@ -127,6 +126,9 @@ all =
         , test "empty line" <|
             \() ->
                 expectScoreMatches emptyLineScore emptyLine
+        , test "continuation" <|
+            \() ->
+                expectScoreMatches continuationScore continuation
         ]
 
 
@@ -384,3 +386,12 @@ emptyLine =
 emptyLineScore : Result String String
 emptyLineScore =
     Ok (defaultStave ++ " notes :8 A/4 :8 B/4 |\x0D\n")
+    
+continuation : String
+continuation =
+    "|ABc |\\ comment \r\n  def |\r\n"  
+    
+continuationScore : Result String String
+continuationScore =
+  Ok (defaultStave ++ " notes | :8 A/4 :8 B/4 :8 C/5 |\x0D\n notes :8 D/5 :8 E/5 :8 F/5 |\r\n")
+    
