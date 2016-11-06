@@ -94,6 +94,12 @@ all =
         , test "basic chord" <|
             \() ->
                 expectScoreMatches basicChordScore basicChord
+        , test "chord with external duration" <|
+            \() ->
+                expectScoreMatches chordExternalDurationScore chordWithExternalDuration
+        , test "chord with both internal and external duration" <|
+            \() ->
+                expectScoreMatches chordTwoDurationsScore chordWithTwoDurations
         , test "basic broken right rhythm" <|
             \() ->
                 expectScoreMatches basicBrokenRightRhythmScore basicBrokenRightRhythm
@@ -274,7 +280,27 @@ basicChord =
 
 basicChordScore : Result String String
 basicChordScore =
-    Ok (defaultStave ++ " notes ( A/4.B/4.C/5 ) |\x0D\n")
+    Ok (defaultStave ++ " notes :8 ( A/4.B/4.C/5 ) |\x0D\n")
+
+
+chordWithExternalDuration : String
+chordWithExternalDuration =
+    "[Ace]2 |\x0D\n"
+
+
+chordExternalDurationScore : Result String String
+chordExternalDurationScore =
+    Ok (defaultStave ++ " notes :q ( A/4.C/5.E/5 ) |\x0D\n")
+
+
+chordWithTwoDurations : String
+chordWithTwoDurations =
+    "[A2c2e2]2 |\x0D\n"
+
+
+chordTwoDurationsScore : Result String String
+chordTwoDurationsScore =
+    Ok (defaultStave ++ " notes :h ( A/4.C/5.E/5 ) |\x0D\n")
 
 
 basicBrokenRightRhythm : String
