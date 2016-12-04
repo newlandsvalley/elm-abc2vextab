@@ -3,7 +3,7 @@ elm-abc2vextab
 
 WORK IN PROGRESS
 
-This is a utility which translates an __AbcTune__ (defined in [Abc.ParseTree](https://github.com/newlandsvalley/elm-abc-parser/blob/master/src/Abc/ParseTree.elm)) into [VexTab](http://www.vexflow.com/vextab/tutorial.html) and hence allows scores to be produced from ABC tunes.
+This is an Elm 0.18 utility which translates an __AbcTune__ (defined in [Abc.ParseTree](https://github.com/newlandsvalley/elm-abc-parser/blob/master/src/Abc/ParseTree.elm)) into [VexTab](http://www.vexflow.com/vextab/tutorial.html) and hence allows scores to be produced from ABC tunes.
 
 VexTab is a pre-alpha release.  There are various features of a score which almost any self-respecting tune will require but which currently remain unsupported.  These include:
 

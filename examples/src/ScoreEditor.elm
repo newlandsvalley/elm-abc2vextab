@@ -3,7 +3,6 @@ module ScoreEditor exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
-import Html.App as Html
 import String exposing (foldr, cons)
 import Maybe exposing (withDefault)
 import Maybe.Extra exposing (isJust)
@@ -247,7 +246,7 @@ view model =
         [ div [ leftPaneStyle ]
             [ span [ leftPanelLabelStyle ] [ text "Load an ABC file:" ]
             , input
-                [ type' "file"
+                [ type_ "file"
                 , id "fileinput"
                   -- FileIO port requires this exact id to be set
                 , accept ".abc, .txt"

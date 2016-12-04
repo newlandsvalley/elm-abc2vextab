@@ -3,7 +3,6 @@ module Abc2ScoreDebugger exposing (..)
 import Html exposing (Html, Attribute, text, div, input, button, textarea, canvas, p)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
-import Html.App as Html
 import String exposing (foldr, cons)
 import Maybe.Extra exposing (isJust)
 import VexTab exposing (..)
